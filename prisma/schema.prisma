@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @db.VarChar(80)
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  firstName String?  @db.VarChar(50)
+  lastName  String?  @db.VarChar(50)
+  role      Role
+  createdAt DateTime @default(now())
+
+  photos Photo[]
+  tokens Token[]
+
+  @@map("users")
+}
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  eventName String   @db.VarChar(100)
+  country   String   @db.VarChar(100)
+  city      String   @db.VarChar(80)
+  address   String   @db.VarChar(80)
+  latitude  Decimal  @db.Decimal(10, 8)
+  longitude Decimal  @db.Decimal(11, 8)
+  date      DateTime @db.Date
+  createdAt DateTime @default(now())
+  isEnded   Boolean  @default(false)
+
+  photos Photo[]
+
+  @@map("events")
+}
+
+model Photo {
+  id        Int      @id @default(autoincrement())
+  url       String   @db.VarChar(255)
+  filename  String   @db.VarChar(255)
+  mimeType  String   @db.VarChar(50)
+  size      Int
+  createdAt DateTime @default(now())
+
+  userId  Int?
+  eventId Int?
+
+  user  User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event? @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([eventId])
+  @@map("photos")
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @db.VarChar(255)
+  userId    Int
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("tokens")
+}
+
+model Discipline {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(100)
+
+  @@map("disciplines")
+}
+
+enum Role {
+  admin
+  coach
+  student
+}
