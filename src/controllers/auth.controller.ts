@@ -10,23 +10,22 @@ import { Role } from "../generated/prisma/client";
 export const register = async(req: Request, res: Response) => {
   const {
     username,
-    email,
     password,
-    role,
+    reqRole,
     firstName,
     lastName,
   } = req.body;
 
-  if (!username || !email || !password || !role) {
+  if (!username || !password || !reqRole) {
     return res.status(400).json({ message: "Missing fields" });
   }
 
-  if (!Object.values(Role).includes(role)) {
-    return res.status(400).json({ message: "Invalid role" });
+  function isValidRole(role: unknown): role is Role {
+    return Object.values(Role).includes(role as Role);
   }
 
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
+  const existingUser = await prisma.user.findFirst({
+    where: { username: username },
   });
 
   if (existingUser) {
@@ -35,16 +34,21 @@ export const register = async(req: Request, res: Response) => {
 
   const hashedPassword = await hashPassword(password);
 
+  if (!isValidRole(reqRole)) {
+    return res.status(400).json({ message: 'Invalid role value' });
+  };
+
   const user = await prisma.user.create({
     data: {
-      username,
-      email,
+      username: username, 
       password: hashedPassword,
-      role,
-      firstName,
-      lastName
+      role: reqRole,
+      firstName: firstName ?? null, 
+      lastName: lastName ?? null, 
     },
   });
+
+  if (user)
 
   res.status(201).json({
     id: user.id,
@@ -61,14 +65,14 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Missing credentials" });
   }
 
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  if (!email || !password) {
+  if (!username || !password) {
     return res.status(400).json({ message: "Missing credentials" });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email },
+  const user = await prisma.user.findFirst({
+    where: { username: username },
   });
 
   if (!user) {
@@ -83,12 +87,11 @@ export const login = async (req: Request, res: Response) => {
 
   const token = signAccessToken(user.id, user.role);
 
-  res.json({
+  res.status(200).json({
     accessToken: token,
     user: {
       id: user.id,
-      email: user.email,
-      role: user.role,
+      username: user.username,
     },
   });
 };

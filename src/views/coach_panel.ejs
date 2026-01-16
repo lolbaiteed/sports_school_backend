@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Coach Panel - SportZone</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+    <div class="logo"><h1>SPORT<span>sport</span></h1></div>
+    <div class="nav-right">
+        <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">KZ / RU</button>
+        <button class="logout-btn" onclick="logout()">Шығу</button>
+    </div>
+</header>
+
+    <div class="container">
+        <div id="coachProfile" class="coach-card">
+            </div>
+
+        <div class="geo-section card" style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3><i class="fas fa-map-marker-alt"></i> Локация</h3>
+            <button class="save-btn" style="width: auto; padding: 10px 20px;" onclick="getLocation()">Құрылғы локациясына рұқсат беру</button>
+            <p id="currentPos" style="margin-top: 10px; color: #ccff00;"></p>
+        </div>
+
+        <h3 id="athTitle">МЕНІҢ СПОРТШЫЛАРЫМ</h3>
+        <div id="myAthletes" class="athlete-grid"></div>
+    </div>
+
+    <script>
+        // Тілдік база
+const translations = {
+    KZ: {
+        mainTitle: "БАСҚАРУ ПАНЕЛІ",
+        addCoach: "ЖАТТЫҚТЫРУШЫ ҚОСУ",
+        saveBtn: "САҚТАУ",
+        coachName: "Аты-жөні",
+        eventLabel: "Жарыс мерзімі:",
+        athTitle: "МЕНІҢ СПОРТШЫЛАРЫМ",
+        uploadPhoto: "Фото жүктеу",
+        logout: "ШЫҒУ"
+    },
+    RU: {
+        mainTitle: "ПАНЕЛЬ УПРАВЛЕНИЯ",
+        addCoach: "ДОБАВИТЬ ТРЕНЕРА",
+        saveBtn: "СОХРАНИТЬ",
+        coachName: "ФИО",
+        eventLabel: "Сроки соревнования:",
+        athTitle: "МОИ СПОРТСМЕНЫ",
+        uploadPhoto: "Загрузить фото",
+        logout: "ВЫХОД"
+    }
+};
+
+let currentLang = localStorage.getItem('siteLang') || 'KZ';
+
+function toggleLanguage() {
+    // Тілді ауыстыру
+    currentLang = currentLang === 'KZ' ? 'RU' : 'KZ';
+    localStorage.setItem('siteLang', currentLang); // Таңдауды сақтап қою
+    applyLanguage();
+}
+
+function applyLanguage() {
+    const t = translations[currentLang];
+
+    // Мәтіндерді ID арқылы ауыстыру (егер олар бетте болса)
+    if(document.getElementById('mainTitle')) document.getElementById('mainTitle').innerText = t.mainTitle;
+    if(document.getElementById('addCoachBtnTxt')) document.getElementById('addCoachBtnTxt').innerText = t.addCoach;
+    if(document.getElementById('athTitle')) document.getElementById('athTitle').innerText = t.athTitle;
+    
+    // Батырма мәтінін жаңарту
+    document.getElementById('langBtn').innerText = currentLang === 'KZ' ? "KZ / RU" : "RU / KZ";
+
+    // Егер бетте жаттықтырушылар тізімі болса, оларды қайта жүктеу (render функциясын шақыру)
+    if (typeof render === "function") render(); 
+    if (typeof renderCoachInfo === "function") renderCoachInfo();
+}
+
+// Бет жүктелгенде тілді бірден қолдану
+document.addEventListener('DOMContentLoaded', applyLanguage);
+        const coachData = JSON.parse(localStorage.getItem('loggedCoach'));
+        if (!coachData) window.location.href = 'coach_login.html';
+
+        function renderCoachInfo() {
+            const profile = document.getElementById('coachProfile');
+            profile.innerHTML = `
+                <div class="coach-main-info">
+                    <img src="${coachData.photo || 'https://via.placeholder.com/80'}" class="coach-img-circle">
+                    <div>
+                        <h2>${coachData.name}</h2>
+                        <p style="color: #ccff00">${coachData.rank} (${coachData.sport})</p>
+                    </div>
+                </div>
+                <div class="event-details">
+                    <div><b>Жарыс:</b> ${coachData.event}</div>
+                    <div><b>Мерзімі:</b> ${coachData.start} / ${coachData.end}</div>
+                    <div><b>Админ белгілеген орын:</b> <a href="${coachData.geo}" target="_blank" style="color:#00d4ff">🗺 Көру</a></div>
+                </div>
+                <p style="font-size: 12px; color: #888; margin-top: 10px;">* Бұл деректерді тек Админ өзгерте алады.</p>
+            `;
+
+            const athList = document.getElementById('myAthletes');
+            athList.innerHTML = '';
+            coachData.athletes.forEach((ath, idx) => {
+                athList.innerHTML += `
+                    <div class="athlete-card">
+                        <img src="${ath.photo || 'https://via.placeholder.com/100'}" class="athlete-thumb" style="width: 80px; height: 80px;">
+                        <div>
+                            <b>${ath.name}</b><br>
+                            <small>${ath.dob}</small><br>
+                            <input type="file" id="file-${idx}" style="display:none" onchange="updatePhoto(${idx})">
+                            <button class="mini-add-btn" onclick="document.getElementById('file-${idx}').click()" style="margin-top:5px">
+                                <i class="fas fa-camera"></i> Фото жүктеу
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function updatePhoto(athIdx) {
+            const file = document.getElementById(`file-${athIdx}`).files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                // 1. Жергілікті дисплейді жаңарту
+                coachData.athletes[athIdx].photo = reader.result;
+                
+                // 2. Негізгі Деректер қорын (sportDB) жаңарту
+                let db = JSON.parse(localStorage.getItem('sportDB'));
+                const coachIdx = db[coachData.sport].findIndex(c => c.login === coachData.login);
+                db[coachData.sport][coachIdx].athletes[athIdx].photo = reader.result;
+                
+                localStorage.setItem('sportDB', JSON.stringify(db));
+                localStorage.setItem('loggedCoach', JSON.stringify(coachData));
+                alert("Фото сақталды! Админ оны көре алады.");
+                renderCoachInfo();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    document.getElementById('currentPos').innerText = 
+                        `Сіздің қазіргі локацияңыз: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+                });
+            } else {
+                alert("Геолокацияны браузеріңіз қолдамайды.");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedCoach');
+            window.location.href = 'coach_login.html';
+        }
+
+        renderCoachInfo();
+    </script>
+</body>
+</html>

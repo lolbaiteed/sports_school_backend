@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport Selection</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+
+    <header class="navbar">
+        <div class="logo"><h1>SPORT<span>sport</span></h1></div>
+        <div class="lang-switch">
+            <button onclick="toggleLangDash()" id="langBtnDash">KZ / RU</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 id="pageTitle" class="section-title">СПОРТ ТҮРЛЕРІ</h2>
+        <div class="sport-grid" id="sportGrid">
+            </div>
+    </div>
+
+    <script>
+        const sportsData = [
+            { id: 'weightlifting', kz: 'Ауыр атлетика', ru: 'Тяжелая атлетика', icon: 'fa-dumbbell' },
+            { id: 'boxing', kz: 'Бокс', ru: 'Бокс', icon: 'fa-hand-fist' },
+            { id: 'cycling', kz: 'Велоспорт', ru: 'Велоспорт', icon: 'fa-bicycle' },
+            { id: 'greco-roman', kz: 'Грек-Рим күресі', ru: 'Греко-римская борьба', icon: 'fa-user-ninja' },
+            { id: 'judo', kz: 'Дзюдо', ru: 'Дзюдо', icon: 'fa-mandalorian' },
+            { id: 'freestyle-wrestling', kz: 'Еркін күрес', ru: 'Вольная борьба', icon: 'fa-people-pulling' },
+            { id: 'athletics', kz: 'Жеңіл Атлетика', ru: 'Легкая атлетика', icon: 'fa-person-running' },
+            { id: 'curling', kz: 'Керлинг', ru: 'Керлинг', icon: 'fa-compact-disc' },
+            { id: 'archery', kz: 'Садақ ату', ru: 'Стрельба из лука', icon: 'fa-bullseye' },
+            { id: 'climbing', kz: 'Спорттық шыңға өрмелеу', ru: 'Скалолазание', icon: 'fa-mountain' },
+            { id: 'taekwondo', kz: 'Таеквондо', ru: 'Тхэквондо', icon: 'fa-khal-drogo' }
+        ];
+
+        let currentLang = 'KZ';
+
+        function renderSports() {
+            const grid = document.getElementById('sportGrid');
+            grid.innerHTML = '';
+            sportsData.forEach(sport => {
+                const card = document.createElement('div');
+                card.className = 'sport-card';
+                card.onclick = () => {
+                    localStorage.setItem('selectedSport', sport.id);
+                    window.location.href = 'coaches.html';
+                };
+                card.innerHTML = `
+                    <i class="fas ${sport.icon} fa-3x"></i>
+                    <p>${currentLang === 'KZ' ? sport.kz : sport.ru}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleLangDash() {
+            currentLang = currentLang === 'KZ' ? 'RU' : 'KZ';
+            document.getElementById('pageTitle').innerText = currentLang === 'KZ' ? 'СПОРТ ТҮРЛЕРІ' : 'ВИДЫ СПОРТА';
+            document.getElementById('langBtnDash').innerText = currentLang === 'KZ' ? 'KZ / RU' : 'RU / KZ';
+            renderSports();
+        }
+
+        renderSports();
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - SportZone</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><h1>SPORT<span>sport</span></h1></div>
+        <div class="nav-right">
+            <button class="lang-btn" onclick="toggleLang()" id="langBtn">KZ / RU</button>
+            <a href="dashboard.html" class="back-btn"><i class="fas fa-sign-out-alt"></i></a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="header-section">
+            <h2 id="mainTitle">БАСҚАРУ ПАНЕЛІ</h2>
+            <button class="add-coach-special" onclick="openCoachModal()">
+                <i class="fas fa-user-plus"></i> <span id="addCoachBtnTxt">ЖАТТЫҚТЫРУШЫ ҚОСУ</span>
+            </button>
+        </div>
+        <div id="coachList"></div>
+    </div>
+
+    <div id="coachModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('coachModal')">&times;</span>
+            <h3 id="coachModalTitle">ЖАТТЫҚТЫРУШЫ МӘЛІМЕТІ</h3>
+            <form id="coachForm">
+                <input type="hidden" id="editCoachIndex">
+                <div class="form-grid">
+                    <input type="text" id="cName" placeholder="Аты-жөні" required>
+                    <input type="text" id="cRank" placeholder="Дәрежесі" required>
+                    <input type="tel" id="cPhone" placeholder="Телефон (8707...)" required>
+                    <input type="text" id="cEvent" placeholder="Жарыс атауы" required>
+                    <input type="text" id="cGeo" placeholder="Геолокация (Карта сілтемесі немесе мекенжай)" required>
+                    <div class="date-range">
+                        <label>Жарыс мерзімі:</label>
+                        <input type="date" id="cStart">
+                        <input type="date" id="cEnd">
+                    </div>
+                    <div class="auth-box">
+                        <label>Жүйеге кіру деректері:</label>
+                        <input type="text" id="cLogin" placeholder="Логин құрастыру" required>
+                        <input type="password" id="cPass" placeholder="Пароль құрастыру" required>
+                    </div>
+                    <input type="file" id="cPhoto" accept="image/*">
+                </div>
+                <button type="submit" class="save-btn">САҚТАУ</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="athleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('athleteModal')">&times;</span>
+            <h3 id="athModalTitle">СПОРТШЫ ҚОСУ</h3>
+            <form id="athleteForm">
+                <input type="hidden" id="targetCIndex">
+                <input type="hidden" id="editAIndex">
+                <input type="text" id="aName" placeholder="Аты-жөні" required>
+                <input type="date" id="aDob" required>
+                <input type="file" id="aPhoto" accept="image/*">
+                <button type="submit" class="save-btn">ҚОСУ</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script_coaches.js"></script>
+</body>
+</html>

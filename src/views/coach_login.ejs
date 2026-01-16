@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Coach Login - SportZone</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+    <div class="login-box">
+        <h2>COACH LOGIN</h2>
+        <form id="coachLoginForm">
+            <input type="text" id="lName" placeholder="Username (Логин)" required>
+            <input type="password" id="lPass" placeholder="Password (Пароль)" required>
+            <button type="submit" class="login-btn">КІРУ</button>
+        </form>
+        <p id="errorMsg" style="color: red; display: none; margin-top: 10px;">Қате логин немесе пароль!</p>
+    </div>
+
+    <script>
+        document.getElementById('coachLoginForm').onsubmit = function(e) {
+            e.preventDefault();
+            const user = document.getElementById('lName').value;
+            const pass = document.getElementById('lPass').value;
+            const db = JSON.parse(localStorage.getItem('sportDB')) || {};
+
+            let foundCoach = null;
+            let foundSport = "";
+
+            // Барлық спорт түрлері бойынша жаттықтырушыны іздеу
+            for (let sport in db) {
+                const coach = db[sport].find(c => c.login === user && c.pass === pass);
+                if (coach) {
+                    foundCoach = coach;
+                    foundSport = sport;
+                    break;
+                }
+            }
+
+            if (foundCoach) {
+                // Табылған жаттықтырушыны сессияға сақтау
+                localStorage.setItem('loggedCoach', JSON.stringify({ ...foundCoach, sport: foundSport }));
+                window.location.href = 'coach_panel.html';
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
