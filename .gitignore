@@ -142,3 +142,4 @@ vite.config.ts.timestamp-*
 prisma/migrations/
 prisma/generated/
 src/generated/
+uploads/
