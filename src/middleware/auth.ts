@@ -12,19 +12,22 @@ export interface AuthRequest extends Request {
 }
 
 export function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
-  const header = req.headers.authorization;
-
-  if (!header?.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Missing token"});
-  }
-
+  const cookie = req.cookies.access_token;
   try {
-    const token = header.split(" ")[1];
+    const token = cookie; 
+
+    if (!token) res.redirect('/'); 
+
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as unknown as JwtPayload;
 
+    if (!payload) throw new Error("Token not verified");
+
     req.user = payload;
+    console.log(req.user);
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
+    if (error instanceof Error) {
+      return res.status(401).json(error.message);
+    }
   }
 }

@@ -32,6 +32,12 @@ body {
     color: #ccff00;
 }
 
+.lang-switch {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
 .lang-switch button {
     background: transparent;
     border: 2px solid #ccff00;
@@ -86,6 +92,27 @@ input {
 
 input:focus {
     border-bottom: 2px solid #ccff00;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  background: #222;
+  border: 1px solid #444;
+  color: white;
+}
+
+select:focus {
+  border-bottom: 2px solid #ccff00;
+}
+
+.iti {
+  width: 100%; 
+}
+
+.iti__dropdown-content {
+  background-color: #222;
 }
 
 .login-btn {

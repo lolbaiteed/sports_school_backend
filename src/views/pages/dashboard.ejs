@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="kk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sport Selection</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+
+<%- include('../partials/navbar_template.ejs', { title: 'Sport selection'}) %>
+
 <body class="dashboard-body">
 
-    <header class="navbar">
-        <div class="logo"><h1>SPORT<span>sport</span></h1></div>
-        <div class="lang-switch">
-            <button onclick="toggleLangDash()" id="langBtnDash">KZ / RU</button>
-        </div>
-    </header>
+    <!-- <header class="navbar"> -->
+    <!--     <div class="logo"><h1>SPORT<span>sport</span></h1></div> -->
+    <!--     <div class="lang-switch"> -->
+    <!--         <button onclick="toggleLangDash()" id="langBtnDash">KZ / RU</button> -->
+    <!--         <form action="api/auth/logout" method="POST"> -->
+    <!--           <button >logout</button> -->
+    <!--         </form> -->
+    <!--     </div> -->
+    <!-- </header> -->
 
     <div class="container">
         <h2 id="pageTitle" class="section-title">СПОРТ ТҮРЛЕРІ</h2>
@@ -47,7 +46,7 @@
                 card.className = 'sport-card';
                 card.onclick = () => {
                     localStorage.setItem('selectedSport', sport.id);
-                    window.location.href = 'coaches.html';
+                    window.location.href = 'coaches';
                 };
                 card.innerHTML = `
                     <i class="fas ${sport.icon} fa-3x"></i>

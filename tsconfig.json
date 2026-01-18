@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@/generated/*": ["src/generated/*"]
-    },
     "target": "ES2020",
     "module": "NodeNext",
-    "outDir": "dist",
-    "rootDir": "src",
+    "baseUrl": "./src",
+    "paths": {
+      "@services/*": ["services/*"], // Specific alias for the services directory
+      "@utils/*": ["utils/*"] // Specific alias for the utils directory
+    },
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

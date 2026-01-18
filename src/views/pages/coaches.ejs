@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - SportZone</title>
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.15.0/build/css/intlTelInput.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header class="navbar">
@@ -30,20 +31,29 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('coachModal')">&times;</span>
             <h3 id="coachModalTitle">ЖАТТЫҚТЫРУШЫ МӘЛІМЕТІ</h3>
-            <form id="coachForm">
+            <form id="coachForm" action="/api/auth/register" method="POST">
                 <input type="hidden" id="editCoachIndex">
                 <div class="form-grid">
                     <input type="text" id="cName" placeholder="Аты-жөні" required>
-                    <input type="text" id="cRank" placeholder="Дәрежесі" required>
-                    <input type="tel" id="cPhone" placeholder="Телефон (8707...)" required>
+                    <input type="hidden" id="cFristName" name="firstName">
+                    <input type="hidden" id="cLastName" name="lastName">
+                    <select id="cRole">
+                      <option value="">Дәрежесі</option>
+                      <option value="admin">Admin</option>
+                      <option value="coach">Coach</option>
+                      <option value="student">Student</option>
+                    </select>
+                    <input type="tel" id="cPhone" placeholder="Телефон (123 456 7890)" required>
                     <input type="text" id="cEvent" placeholder="Жарыс атауы" required>
                     <input type="text" id="cGeo" placeholder="Геолокация (Карта сілтемесі немесе мекенжай)" required>
+                    <input type="hidden" id="cLatitute">
+                    <input type="hidden" id="cLongitute">
                     <div class="date-range">
                         <label>Жарыс мерзімі:</label>
                         <input type="date" id="cStart">
                         <input type="date" id="cEnd">
                     </div>
-                    <div class="auth-box">
+                    <div class="auth-box" id="credentials">
                         <label>Жүйеге кіру деректері:</label>
                         <input type="text" id="cLogin" placeholder="Логин құрастыру" required>
                         <input type="password" id="cPass" placeholder="Пароль құрастыру" required>
@@ -63,13 +73,37 @@
                 <input type="hidden" id="targetCIndex">
                 <input type="hidden" id="editAIndex">
                 <input type="text" id="aName" placeholder="Аты-жөні" required>
+                <input type="hidden" id="aFristName" name="firstName">
+                <input type="hidden" id="aLastName" name="lastName">
                 <input type="date" id="aDob" required>
+                <input type="tel" id="aPhone" placeholder="Телефон (123 456 7890)" required>
                 <input type="file" id="aPhoto" accept="image/*">
                 <button type="submit" class="save-btn">ҚОСУ</button>
             </form>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.15.0/build/js/intlTelInput.min.js"></script>
+    <script>
+      const coachInput = document.getElementById('cPhone');
+      const studentInput = document.getElementById('aPhone');
+
+      const dataList = <%- JSON.stringify(dataList) %>;
+
+      const itiCoach = window.intlTelInput(coachInput, {
+        initialCountry: "kz",
+        nationalMode: false,
+        autoHideDialCode: false,
+        loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.15.0/build/js/utils.js"),
+      });
+
+      const itiStudent = window.intlTelInput(studentInput, {
+        initialCountry: "kz",
+        nationalMode: false,
+        autoHideDialCode: false,
+        loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.15.0/build/js/utils.js"),
+      });
+    </script>
     <script src="js/script_coaches.js"></script>
 </body>
 </html>

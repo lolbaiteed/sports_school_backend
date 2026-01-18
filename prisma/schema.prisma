@@ -15,33 +15,51 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @db.VarChar(80) @unique
-  password  String   @db.VarChar(255)
-  firstName String?  @db.VarChar(50)
-  lastName  String?  @db.VarChar(50)
-  role      Role
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  username    String   @unique @db.VarChar(80)
+  password    String   @db.VarChar(255)
+  phoneNumber String?  @unique @db.VarChar(255)
+  firstName   String?  @db.VarChar(50)
+  lastName    String?  @db.VarChar(50)
+  role        Role
+  createdAt   DateTime @default(now())
 
-  photos Photo[]
-  tokens Token[]
+  photos   Photo[]
+  tokens   Token[]
+  students Student[]
+  events   Event[]
 
   @@map("users")
+}
+
+model Student {
+  id          Int      @id @default(autoincrement())
+  phoneNumber String   @unique @db.VarChar(255)
+  firstName   String   @db.VarChar(50)
+  lastName    String   @db.VarChar(50)
+  dateOfBirth DateTime
+  createdAt   DateTime @default(now())
+  coachId     Int?
+
+  photos Photo[]
+  coach  User?   @relation(fields: [coachId], references: [id], onDelete: Cascade)
+
+  @@map("students")
 }
 
 model Event {
   id        Int      @id @default(autoincrement())
   eventName String   @db.VarChar(100)
-  country   String   @db.VarChar(100)
-  city      String   @db.VarChar(80)
-  address   String   @db.VarChar(80)
   latitude  Decimal  @db.Decimal(10, 8)
   longitude Decimal  @db.Decimal(11, 8)
-  date      DateTime @db.Date
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
   createdAt DateTime @default(now())
-  isEnded   Boolean  @default(false)
+  coachId   Int?
 
   photos Photo[]
+
+  coach User? @relation(fields: [coachId], references: [id], onDelete: Cascade)
 
   @@map("events")
 }
@@ -54,14 +72,17 @@ model Photo {
   size      Int
   createdAt DateTime @default(now())
 
-  userId  Int?
-  eventId Int?
+  userId    Int?
+  eventId   Int?
+  studentId Int?
 
-  user  User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event Event? @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  student Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([eventId])
+  @@index([studentId])
   @@map("photos")
 }
 

@@ -46,22 +46,22 @@ function showAlert(resp) {
   }
 }
 
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
-  event.preventDefault(); // Форманың автоматты түрде қайта жүктелуін тоқтатады
-  const userValue = document.getElementById('username').value;
-  const passValue = document.getElementById('password').value;
-
-  const url = "http://localhost:3000";
-  const resp = await fetch(`${url}/auth/login`, {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: userValue, password: passValue}),
-  });
-
-  showAlert(resp);
-
-  console.log(resp);
-});
+// document.getElementById('loginForm').addEventListener('submit', async function(event) {
+//   event.preventDefault(); // Форманың автоматты түрде қайта жүктелуін тоқтатады
+//   const userValue = document.getElementById('username').value;
+//   const passValue = document.getElementById('password').value;
+//
+//   const url = "http://localhost:3000";
+//   const resp = await fetch(`${url}/auth/login`, {
+//     method: 'POST',
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ username: userValue, password: passValue}),
+//   });
+//
+//   showAlert(resp);
+//
+//   console.log(resp);
+// });
 
 
 // document.getElementById('loginForm').addEventListener('submit', function(event) {

@@ -3,162 +3,385 @@ let selectedSport = localStorage.getItem('selectedSport') || 'General';
 let db = JSON.parse(localStorage.getItem('sportDB')) || {};
 
 const translations = {
-    KZ: { main: "БАСҚАРУ ПАНЕЛІ", addC: "ЖАТТЫҚТЫРУШЫ ҚОСУ", event: "Жарыс:", date: "Мерзімі:", tel: "Тел:", geo: "Орыны:", save: "САҚТАУ" },
-    RU: { main: "ПАНЕЛЬ УПРАВЛЕНИЯ", addC: "ДОБАВИТЬ ТРЕНЕРА", event: "Турнир:", date: "Сроки:", tel: "Тел:", geo: "Место:", save: "СОХРАНИТЬ" }
+  KZ: { main: "БАСҚАРУ ПАНЕЛІ", addC: "ЖАТТЫҚТЫРУШЫ ҚОСУ", event: "Жарыс:", date: "Мерзімі:", tel: "Тел:", geo: "Орыны:", save: "САҚТАУ" },
+  RU: { main: "ПАНЕЛЬ УПРАВЛЕНИЯ", addC: "ДОБАВИТЬ ТРЕНЕРА", event: "Турнир:", date: "Сроки:", tel: "Тел:", geo: "Место:", save: "СОХРАНИТЬ" }
 };
 
 function toggleLang() {
-    currentLang = currentLang === 'KZ' ? 'RU' : 'KZ';
-    render();
+  currentLang = currentLang === 'KZ' ? 'RU' : 'KZ';
+  render();
 }
 
 function render() {
-    const list = document.getElementById('coachList');
-    list.innerHTML = '';
-    const coaches = db[selectedSport] || [];
+  const list = document.getElementById('coachList');
+  list.innerHTML = '';
+  console.log(dataList);
 
-    document.getElementById('mainTitle').innerText = translations[currentLang].main;
-    document.getElementById('addCoachBtnTxt').innerText = translations[currentLang].addC;
+  document.getElementById('mainTitle').innerText = translations[currentLang].main;
+  document.getElementById('addCoachBtnTxt').innerText = translations[currentLang].addC;
 
-    coaches.forEach((c, cIdx) => {
-        let athletesHTML = (c.athletes || []).map((a, aIdx) => `
-            <div class="athlete-card">
-                <img src="${a.photo || 'https://via.placeholder.com/50'}" class="athlete-thumb">
-                <div style="font-size:12px">
-                    <b>${a.name}</b><br>${a.dob}
-                </div>
-                <div style="margin-left:auto">
-                    <i class="fas fa-edit" style="color:orange; cursor:pointer" onclick="openAthModal(${cIdx}, ${aIdx})"></i>
-                    <i class="fas fa-trash" style="color:red; cursor:pointer" onclick="deleteAth(${cIdx}, ${aIdx})"></i>
-                </div>
-            </div>
-        `).join('');
+  dataList.forEach((c, cIdx) => {
+    // Create coach card
+    const coachCard = document.createElement("div");
+    coachCard.className = "coach-card";
 
-        list.innerHTML += `
-            <div class="coach-card">
-                <div class="coach-main-info">
-                    <img src="${c.photo || 'https://via.placeholder.com/80'}" class="coach-img-circle">
-                    <div>
-                        <h3>${c.name}</h3>
-                        <p style="color:#aaa">${c.rank}</p>
-                    </div>
-                    <div style="margin-left:auto">
-                        <i class="fas fa-edit" style="color:orange; cursor:pointer; margin-right:15px" onclick="openCoachModal(${cIdx})"></i>
-                        <i class="fas fa-trash" style="color:red; cursor:pointer" onclick="deleteCoach(${cIdx})"></i>
-                    </div>
-                </div>
-                <div class="event-details">
-                    <div><b>${translations[currentLang].event}</b> ${c.event}</div>
-                    <div><b>${translations[currentLang].tel}</b> ${c.phone}</div>
-                    <div><b>${translations[currentLang].date}</b> ${c.start} / ${c.end}</div>
-                    <div><b>${translations[currentLang].geo}</b> <a href="${c.geo}" target="_blank" class="geo-link">🗺 Карта</a></div>
-                </div>
-                <button class="save-btn" style="width:auto; padding:5px 15px" onclick="openAthModal(${cIdx})">+ Спортшы</button>
-                <div class="athlete-grid">${athletesHTML}</div>
-            </div>`;
+    // --- Coach main info ---
+    const coachMainInfo = document.createElement("div");
+    coachMainInfo.className = "coach-main-info";
+
+    // Coach avatar
+    const coachImg = document.createElement("img");
+    coachImg.src = c.coach.avatar || "https://via.placeholder.com/80";
+    coachImg.id = "cAvatar";
+    coachImg.name = c.coach.avatarId;
+    coachImg.className = "coach-img-circle";
+
+    // Hidden coachId input
+    const coachIdInput = document.createElement("input");
+    coachIdInput.type = "hidden";
+    coachIdInput.id = "coachId";
+    coachIdInput.value = c.coach.id;
+
+    // Coach name and role
+    const coachInfoDiv = document.createElement("div");
+    const coachName = document.createElement("h3");
+    coachName.textContent = `${c.coach.firstName} ${c.coach.lastName}`;
+
+    const coachRole = document.createElement("p");
+    coachRole.style.color = "#aaa";
+    coachRole.textContent = c.coach.role;
+
+    coachInfoDiv.appendChild(coachName);
+    coachInfoDiv.appendChild(coachRole);
+
+    // Coach action buttons
+    const coachActions = document.createElement("div");
+    coachActions.style.marginLeft = "auto";
+
+    const coachEdit = document.createElement("i");
+    coachEdit.className = "fas fa-edit";
+    coachEdit.style = "color:orange; cursor:pointer; margin-right:15px";
+    coachEdit.addEventListener("click", () => openCoachModal("PATCH", c.coach, c.events));
+
+    const coachDelete = document.createElement("i");
+    coachDelete.className = "fas fa-trash";
+    coachDelete.style = "color:red; cursor:pointer";
+    coachDelete.addEventListener("click", () => deleteCoach(cIdx));
+
+    coachActions.appendChild(coachEdit);
+    coachActions.appendChild(coachDelete);
+
+    // Assemble coach main info
+    coachMainInfo.appendChild(coachImg);
+    coachMainInfo.appendChild(coachIdInput);
+    coachMainInfo.appendChild(coachInfoDiv);
+    coachMainInfo.appendChild(coachActions);
+
+    // --- Event details ---
+    const eventDetails = document.createElement("div");
+    eventDetails.className = "event-details";
+
+    const eventDiv = document.createElement("div");
+    eventDiv.innerHTML = `<b>${translations[currentLang].event}</b> ${c.events.eventName}`;
+    eventDiv.name = c.events.id;
+    eventDiv.id = "cEventId";
+
+    const telDiv = document.createElement("div");
+    telDiv.innerHTML = `<b>${translations[currentLang].tel}</b> ${c.coach.phoneNumber}`;
+
+    const dateDiv = document.createElement("div");
+    dateDiv.innerHTML = `<b>${translations[currentLang].date}</b> ${c.events.startDate} / ${c.events.endDate}`;
+    dateDiv.id = "cEventDate";
+
+    const geoDiv = document.createElement("div");
+    geoDiv.innerHTML = `<b>${translations[currentLang].geo}</b> <a href="${c.geo}" target="_blank" class="geo-link">🗺 Карта</a>`;
+
+    eventDetails.appendChild(eventDiv);
+    eventDetails.appendChild(telDiv);
+    eventDetails.appendChild(dateDiv);
+    eventDetails.appendChild(geoDiv);
+
+    // --- Add athlete button ---
+    const addAthleteBtn = document.createElement("button");
+    addAthleteBtn.className = "save-btn";
+    addAthleteBtn.style.width = "auto";
+    addAthleteBtn.style.padding = "5px 15px";
+    addAthleteBtn.textContent = "+ Спортшы";
+    addAthleteBtn.addEventListener("click", () => openAthModal(c.coach.id));
+
+    // --- Athlete grid ---
+    const athleteGrid = document.createElement("div");
+    athleteGrid.className = "athlete-grid";
+
+    (c.students || []).forEach((a, aIdx) => {
+      const athleteCard = document.createElement("div");
+      athleteCard.className = "athlete-card";
+
+      // Athlete avatar
+      const aImg = document.createElement("img");
+      aImg.src = a.photos[0].url || "https://via.placeholder.com/50";
+      aImg.id = "aAvatar";
+      aImg.name = a.avatarId;
+      aImg.className = "athlete-thumb";
+
+      // Athlete info
+      const aInfo = document.createElement("div");
+      aInfo.style.fontSize = "12px";
+      aInfo.innerHTML = `<b>${a.firstName}</b><br>${new Date(a.dateOfBirth).toLocaleDateString()}`;
+
+      // Athlete actions
+      const aActions = document.createElement("div");
+      aActions.style.marginLeft = "auto";
+
+      const aEdit = document.createElement("i");
+      aEdit.className = "fas fa-edit";
+      aEdit.style.color = "orange";
+      aEdit.style.cursor = "pointer";
+      aEdit.addEventListener("click", () => openAthModal(cIdx, aIdx));
+
+      const aDelete = document.createElement("i");
+      aDelete.className = "fas fa-trash";
+      aDelete.style.color = "red";
+      aDelete.style.cursor = "pointer";
+      aDelete.addEventListener("click", () => deleteAth(cIdx, aIdx));
+
+      aActions.appendChild(aEdit);
+      aActions.appendChild(aDelete);
+
+      athleteCard.appendChild(aImg);
+      athleteCard.appendChild(aInfo);
+      athleteCard.appendChild(aActions);
+
+      athleteGrid.appendChild(athleteCard);
     });
+
+    // --- Assemble coach card ---
+    coachCard.appendChild(coachMainInfo);
+    coachCard.appendChild(eventDetails);
+    coachCard.appendChild(addAthleteBtn);
+    coachCard.appendChild(athleteGrid);
+
+    // Append to main list
+    list.appendChild(coachCard);
+  });
 }
-
-// Функционал: Суретті Base64-ке айналдыру
-async function toBase64(file) {
-    return new Promise((res, rej) => {
-        const reader = new FileReader();
-        reader.onload = () => res(reader.result);
-        reader.onerror = rej;
-        reader.readAsDataURL(file);
-    });
-}
-
-document.getElementById('coachForm').onsubmit = async (e) => {
-    e.preventDefault();
-    const idx = document.getElementById('editCoachIndex').value;
-    const photoFile = document.getElementById('cPhoto').files[0];
-    let photoBase64 = idx !== "" ? db[selectedSport][idx].photo : null;
-    
-    if(photoFile) photoBase64 = await toBase64(photoFile);
-
-    const coachData = {
-        name: document.getElementById('cName').value,
-        rank: document.getElementById('cRank').value,
-        phone: document.getElementById('cPhone').value,
-        event: document.getElementById('cEvent').value,
-        geo: document.getElementById('cGeo').value,
-        start: document.getElementById('cStart').value,
-        end: document.getElementById('cEnd').value,
-        login: document.getElementById('cLogin').value,
-        pass: document.getElementById('cPass').value,
-        photo: photoBase64,
-        athletes: idx !== "" ? db[selectedSport][idx].athletes : []
-    };
-
-    if(!db[selectedSport]) db[selectedSport] = [];
-    idx !== "" ? db[selectedSport][idx] = coachData : db[selectedSport].push(coachData);
-    save();
-};
 
 document.getElementById('athleteForm').onsubmit = async (e) => {
-    e.preventDefault();
-    const cIdx = document.getElementById('targetCIndex').value;
-    const aIdx = document.getElementById('editAIndex').value;
-    const photoFile = document.getElementById('aPhoto').files[0];
-    let photoBase64 = (aIdx !== "" && aIdx !== undefined) ? db[selectedSport][cIdx].athletes[aIdx].photo : null;
+  e.preventDefault();
+  const fullName = document.getElementById('aName').value;
+  const firstName = document.getElementById('aFristName');
+  const lastName = document.getElementById('aLastName');
+  const dateOfBirth = document.getElementById('aDob');
+  const coachId = document.getElementById('coachId');
+  [firstName.value, lastName.value] = fullName.split(" ");
+  fullName.disabled = true;
 
-    if(photoFile) photoBase64 = await toBase64(photoFile);
+  const phone = document.getElementById('aPhone');
+  const phoneConverted = itiStudent.getNumber();
+  phone.value = phoneConverted;
+  const imgInput = document.getElementById("aPhoto");
 
-    const athData = {
-        name: document.getElementById('aName').value,
-        dob: document.getElementById('aDob').value,
-        photo: photoBase64
-    };
+  if (imgInput.files && imgInput.files.length > 0) {
+    const img = imgInput.files[0];
 
-    if(aIdx !== "") db[selectedSport][cIdx].athletes[aIdx] = athData;
-    else db[selectedSport][cIdx].athletes.push(athData);
-    save();
-};
+    const imgData = new FormData();
+    imgData.append("avatar", img);
 
-function save() { 
-    localStorage.setItem('sportDB', JSON.stringify(db)); 
-    render(); 
-    closeModal('coachModal'); 
-    closeModal('athleteModal'); 
+    const imgResp = await fetch("/api/files/upload", {
+      method: "POST",
+      body: imgData,
+    });
+
+    const imgRespData = await imgResp.json();
+
+    await fetch('/api/auth/registerStudent', {
+      method: "POST",
+      body: JSON.stringify({
+        firstName: firstName.value,
+        lastName: lastName.value,
+        dateOfBirth: dateOfBirth.value,
+        phoneNumber: phone.value,
+        coachId: parseInt(coachId.value),
+        image: {
+          mimeType: imgRespData.mimeType,
+          size: imgRespData.size,
+          filename: imgRespData.filename,
+          url: imgRespData.url,
+        },
+      }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin"
+    });
+  }
 }
 
-function openCoachModal(idx = null) {
-    document.getElementById('coachModal').style.display = 'block';
-    if(idx !== null) {
-        const c = db[selectedSport][idx];
-        document.getElementById('cName').value = c.name;
-        document.getElementById('cRank').value = c.rank;
-        document.getElementById('cPhone').value = c.phone;
-        document.getElementById('cEvent').value = c.event;
-        document.getElementById('cGeo').value = c.geo;
-        document.getElementById('cStart').value = c.start;
-        document.getElementById('cEnd').value = c.end;
-        document.getElementById('cLogin').value = c.login;
-        document.getElementById('cPass').value = c.pass;
-        document.getElementById('editCoachIndex').value = idx;
-    } else {
-        document.getElementById('coachForm').reset();
-        document.getElementById('editCoachIndex').value = "";
+function save() {
+  localStorage.setItem('sportDB', JSON.stringify(db));
+  render();
+  closeModal('coachModal');
+  closeModal('athleteModal');
+}
+
+function openCoachModal(reqMethod, coach, events) {
+
+  if (reqMethod === "PATCH") {
+    if (!document.getElementById('passRepeat')) {
+      const passRepeat = document.createElement('input');
+      passRepeat.type = "password";
+      passRepeat.id = "passRepeat";
+      passRepeat.placeholder = "repeat password";
+      const authBox = document.getElementById('credentials');
+      authBox.appendChild(passRepeat);
     }
+  }
+
+  document.getElementById('coachModal').style.display = 'block';
+
+  const fullName = `${coach.firstName} ${coach.lastName}`;
+  const geo = `${events.latitule} ${events.longitude}`
+
+  document.getElementById('cName').value = fullName;
+  document.getElementById('cRole').value = coach.role;
+  document.getElementById('cPhone').value = coach.phoneNumber;
+  document.getElementById('cEvent').value = events.eventName;
+  document.getElementById('cGeo').value = geo;
+  document.getElementById('cStart').value = events.startDate;
+  document.getElementById('cEnd').value = events.endDate;
+  document.getElementById('cLogin').value = coach.username;
+
+  document.getElementById('coachForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const fullName = document.getElementById('cName').value;
+    const username = document.getElementById('cLogin').value;
+    const password = document.getElementById('cPass').value;
+    const role = document.getElementById('cRole').value;
+    const eventName = document.getElementById('cEvent').value;
+    const startDate = document.getElementById('cStart').value;
+    const endDate = document.getElementById('cEnd').value;
+    const geo = document.getElementById('cGeo').value;
+    const latitule = document.getElementById('cLatitule');
+    const longitude = document.getElementById('cLongitute');
+    const firstName = document.getElementById('cFristName');
+    const lastName = document.getElementById('cLastName');
+    const phone = document.getElementById('cPhone');
+    const eventId= document.getElementById('cEventId').name;
+    phone.value = itiCoach.getNumber();
+    [firstName.value, lastName.value] = fullName.split(" ");
+    [latitule.value, longitude.vale] = geo.split(" ");
+
+    fullName.disabled = true;
+
+    if (reqMethod === 'PATH') {
+      const imgInput = document.getElementById("cPhoto");
+
+      if (imgInput.files && imgInput.files.length > 0) {
+        const img = imgInput.files[0];
+
+        const imgData = new FormData();
+        imgData.append("avatar", img);
+
+        const imgResp = await fetch("/api/files/upload", {
+          method: reqMethod,
+          body: imgData,
+        });
+
+        const imgRespData = await imgResp.json();
+
+        await fetch('/api/auth/register', {
+          method: reqMethod,
+          body: JSON.stringify({
+            username: username,
+            password: password,
+            role: role,
+            firstName: firstName.value,
+            lastName: lastName.value,
+            phoneNumber: phone.value,
+            image: {
+              mimeType: imgRespData.mimeType,
+              filename: imgRespData.filename,
+              size: imgRespData.size,
+              url: imgRespData.url,
+            },
+          }),
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin"
+        });
+      } else {
+        await fetch('/api/auth/register', {
+          method: reqMethod,
+          body: JSON.stringify({
+            username: username,
+            password: password,
+            role: role,
+            firstName: firstName.value,
+            lastName: lastName.value,
+            phoneNumber: phone.value,
+          }),
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin"
+        });
+        await fetch('/api/admin/addEvent', {
+          method: reqMethod,
+          body: {
+            eventName: eventName,
+            eventId: eventId,
+            latitule: latitule,
+            longitude: longitude,
+            startDate: startDate,
+            endDate: endDate,
+          },
+        });
+      };
+    } else {
+      await fetch('/api/auth/register', {
+        method: reqMethod,
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          role: role,
+          firstName: firstName.value,
+          lastName: lastName.value,
+          phoneNumber: phone.value,
+          image: {
+            mimeType: imgRespData.mimeType,
+            filename: imgRespData.filename,
+            size: imgRespData.size,
+            url: imgRespData.url,
+          },
+        }),
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin"
+      });
+      await fetch('/api/admin/eventUpdate', {
+        method: reqMethod,
+        body: {
+          eventName: eventName,
+          latitule: latitule,
+          longitude: longitude,
+          startDate: startDate,
+          endDate: endDate,
+        },
+      });
+    };
+  }
 }
 
 function openAthModal(cIdx, aIdx = null) {
-    document.getElementById('athleteModal').style.display = 'block';
-    document.getElementById('targetCIndex').value = cIdx;
-    if(aIdx !== null) {
-        const a = db[selectedSport][cIdx].athletes[aIdx];
-        document.getElementById('aName').value = a.name;
-        document.getElementById('aDob').value = a.dob;
-        document.getElementById('editAIndex').value = aIdx;
-    } else {
-        document.getElementById('athleteForm').reset();
-        document.getElementById('editAIndex').value = "";
-    }
+  document.getElementById('athleteModal').style.display = 'block';
+  document.getElementById('targetCIndex').value = cIdx;
+  if (aIdx !== null) {
+    const a = db[selectedSport][cIdx].athletes[aIdx];
+    document.getElementById('aName').value = a.name;
+    document.getElementById('aDob').value = a.dob;
+    document.getElementById('editAIndex').value = aIdx;
+  } else {
+    document.getElementById('athleteForm').reset();
+    document.getElementById('editAIndex').value = "";
+  }
 }
 
-function deleteCoach(i) { if(confirm('Өшіру?')) { db[selectedSport].splice(i,1); save(); } }
-function deleteAth(ci, ai) { db[selectedSport][ci].athletes.splice(ai,1); save(); }
+function deleteCoach(i) { if (confirm('Өшіру?')) { db[selectedSport].splice(i, 1); save(); } }
+function deleteAth(ci, ai) { db[selectedSport][ci].athletes.splice(ai, 1); save(); }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 render();

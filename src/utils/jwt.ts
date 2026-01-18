@@ -11,3 +11,10 @@ export function signAccessToken(userId: number, role: Role) {
     { expiresIn: JWT_EXPIRES_IN }
   );
 }
+
+export function verifyAccessToken(token: string) {
+  return jwt.verify(
+    token,
+    JWT_SECRET
+  );
+}
