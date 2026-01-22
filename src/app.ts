@@ -2,11 +2,12 @@ import express from "express";
 import authRoutes from "./routes/auth.routes";
 import fileRoutes from './routes/file.routes';
 import adminRoutes from './routes/admin.routes';
+import cookieParser from "cookie-parser";
+import path from "path";
 import { prisma } from './db/prisma';
 import { Role } from './generated/prisma/client';
 import { decrypt } from "./services/auth.service";
-import path from "path";
-import cookieParser from "cookie-parser";
+import { swaggerSpec, swaggerUi } from "./docs/swagger";
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use("/uploads", express.static("uploads"));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/admin", adminRoutes);
