@@ -7,22 +7,35 @@ const router = Router();
 
 /**
  * @swagger
- * /admin/CoachUpdate:
+ * /admin/coaches/{coachId}:
  *   patch:
- *     tags:
- *      - Admin
- *     summary: Update coach data 
+ *     summary: Update coach data
+ *     tags: [Admin]
+ *     parameters:
+ *      name: coachId
+ *      in: path
+ *      required: true
+ *      schema: { type: integer }
  *     requestBody:
- *        $ref: '#/components/CoachUpdate'
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              username: {type: string, example: newusername}
+ *              password: {type: string, example: newpass123, description: Only if changing password}
+ *              firstName: {type: string}
+ *              lastName: {type: string}
+ *              phoneNumber: {type: string, example: +71234567890}
+ *              imgId: {type: integer}
+ *              image: {$ref: '#/components/schemas/ImageUpload'}
  *     responses:
- *       200:
- *         description: Coach updated successfully
- *       400:
- *         $ref '#/components/BadRequest'
- *       401:
- *         $ref '#/components/Unauthorized'
+ *      '200': {description: Coach updated}
+ *      '400': {$ref: "#/components/responses/BadRequest"}
+ *      '401': {$ref: '#/components/responses/Unauthorized'}
  */
-router.patch('/CoachUpdate', authenticate, authorize(Role.admin), editCoach);
+router.patch('/coaches/:id', authenticate, authorize(Role.admin), editCoach);
 
 /**
  * @openapi
