@@ -1,17 +1,14 @@
 import express from "express";
+import cookieParser from "cookie-parser";
+import path from "path";
+import swaggerUi from 'swagger-ui-express';
 import authRoutes from "./routes/auth.routes";
 import fileRoutes from './routes/file.routes';
 import adminRoutes from './routes/admin.routes';
-import cookieParser from "cookie-parser";
-import path from "path";
-import * as OpenApiValidator from 'express-openapi-validator';
 import { prisma } from './db/prisma';
 import { Role } from './generated/prisma/client';
 import { decrypt } from "./services/auth.service";
-import swaggerUi from 'swagger-ui-express';
-import yaml from 'js-yaml';
-import { readFileSync } from 'fs';
-
+import { openApiSpec } from "./docs/swagger";
 
 const app = express();
 app.use(express.json());
@@ -22,19 +19,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use("/uploads", express.static("uploads"));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const openApiSpec = yaml.load(
-  readFileSync(path.join(__dirname, 'docs/components.yml'), 'utf8')
-) as any;
-
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
-
-app.use(
-  OpenApiValidator.middleware({
-    apiSpec: openApiSpec,
-    validateRequests: true,
-    validateResponses: process.env.NODE_ENV === 'development',
-  })
-);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/files", fileRoutes);

@@ -50,8 +50,8 @@ model Student {
 model Event {
   id        Int      @id @default(autoincrement())
   eventName String   @db.VarChar(100)
-  latitude  Decimal  @db.Decimal(10, 8)
-  longitude Decimal  @db.Decimal(11, 8)
+  latitude  Float
+  longitude Float
   startDate DateTime @db.Date
   endDate   DateTime @db.Date
   createdAt DateTime @default(now())

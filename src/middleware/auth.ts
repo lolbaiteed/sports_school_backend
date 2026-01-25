@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { Role } from "../generated/prisma/client";
+import { ApiError } from "../utils/ApiError";
 
 interface JwtPayload {
   sub: number;
@@ -16,18 +17,21 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   try {
     const token = cookie; 
 
-    if (!token) res.redirect('/'); 
+    if (!token) throw new ApiError(401, "UNAUTHORIZED", "Authenticate token not found");
 
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as unknown as JwtPayload;
 
-    if (!payload) throw new Error("Token not verified");
+    if (!payload.sub || !payload.role) throw new ApiError(401, "UNAUTHORIZED", "Authenticate token is invalid or expired");
 
     req.user = payload;
-    console.log(req.user);
     next();
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(401).json(error.message);
+    if (error instanceof ApiError) {
+      return res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        details: error.details
+      });
     }
   }
 }

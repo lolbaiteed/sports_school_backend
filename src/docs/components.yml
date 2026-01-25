@@ -1,52 +1,20 @@
-openapi: 3.0.3                # Prefer 3.0.3 over 3.0.0 for bug fixes
-info:
-  title: API
-  version: 1.0.0
-  description: Sample API with users and error handling
-
-servers:
-  - url: http://localhost:3000
-    description: Local development
-
 components:
-
-  securitySchemes: 
-    cookieAuth:
-      type: "ApiKey"
-      in: "cookie"
-      name: "access_token"
-    security:
-      - cookieAuth: []
-  tags:
-    Admin:
-      description: "Admin-only endpoints"
-    Auth:
-      description: "Authentication endpoints"
-    Users:
-      description: "User management"
-  apis: [ './src/routes/*.ts', './components.yml']
   schemas:
     ApiError:
       type: object
-      required:
-        - code
-        - message
+      required: [code, message]
       properties:
         code:
           type: string
           example: INVALID_TOKEN
-          description: Machine-readable error code
         message:
           type: string
           example: Authentication token is missing or invalid
-          description: Human-readable explanation
         details:
           type: array
           items:
             type: string
-          example: ["field 'email' is required"]
-          description: Optional extra info (validation errors, etc.)
-          
+
   responses:
     Unauthorized:
       description: Authentication required or credentials invalid
@@ -54,37 +22,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
-          example:
-            code: UNAUTHORIZED
-            message: Missing or invalid authentication token
 
     Forbidden:
-      description: Authenticated but insufficient permissions
+      description: Insufficient permissions
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
-          example:
-            code: FORBIDDEN
-            message: You do not have permission to update this data
 
     BadRequest:
-      description: Invalid request (validation, malformed data, etc.)
+      description: Invalid request
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
-          examples:
-            missingField:
-              value:
-                code: MISSING_FIELD
-                message: Required field is missing
-                details: ["username is required"]
-            invalidFormat:
-              value:
-                code: INVALID_FORMAT
-                message: Phone number format is incorrect
-                details: ["phoneNumber must start with +"]
 
     NotFound:
       description: Resource not found
@@ -92,9 +43,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
-          example:
-            code: NOT_FOUND
-            message: Coach with this ID does not exist
 
     InternalServerError:
       description: Unexpected server error
@@ -102,6 +50,4 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
-          example:
-            code: INTERNAL_ERROR
-            message: An unexpected error occurred. Please try again later.
+
