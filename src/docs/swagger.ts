@@ -34,7 +34,7 @@ export const openApiSpec = swaggerJSDoc({
         },
       },
       schemas: {
-        ApiError: {
+        ApiResponse: {
           type: 'object',
           required: ['code', 'message'],
           properties: {

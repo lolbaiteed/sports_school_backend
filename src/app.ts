@@ -74,6 +74,6 @@ app.get('/coaches', async (_req, res) => {
   }
 });
 
-//TODO: add delete request to fornt-end, add export to exel, add map integration, coach_login, coach_dashboard
+//TODO: structure routes, add export to exel, coach_dashboard, add recreating/autodelete outdated tokens
 
 export default app;

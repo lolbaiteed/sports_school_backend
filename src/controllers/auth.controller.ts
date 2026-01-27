@@ -4,6 +4,7 @@ import { encrypt, hashData, verifyHash } from "../services/auth.service";
 import { signAccessToken } from "../utils/jwt";
 import { Role } from "../generated/prisma/client";
 import { ApiError } from "../utils/ApiError";
+import { checkInput } from "../utils/checkReq";
 
 /**
  * STUFF ONLY
@@ -270,12 +271,7 @@ export const addEvent = async (req: Request, res: Response) => {
 
     const requiredFields = { eventName, latitude, longitude, startDate, endDate};
 
-    for(const[key, value] of Object.entries(requiredFields)) {
-      if(value === undefined || value === null || value === "") {
-        throw new ApiError(400, "BAD_REQUEST", `${key} is required`);
-      }
-    }
-
+    checkInput(requiredFields);
     await prisma.event.create({
       data: {
         eventName: eventName,
