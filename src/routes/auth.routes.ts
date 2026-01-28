@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, register, logout, registerStudent } from "../controllers/auth.controller";
+import { login, register, logout } from "../controllers/auth.controller";
 import { authenticate } from "../middleware/auth";
 import { authorize } from "../middleware/authorize";
 import { Role } from "../generated/prisma/client";
@@ -10,24 +10,13 @@ const router = Router();
  * @openapi
  * /api/auth/register:
  *  post:
- *    tags: [Admin, Auth]
+ *    tags: [Auth]
  *    responses:
  *      201:
  *       description: Created 
  */
-
 router.post("/register", authenticate, authorize(Role.admin), register);
 
-/**
- * @openapi
- * /api/auth/student/register:
- *    post:
- *      tags: [Admin, Auth]
- *      responses:
- *        201:
- *          description: Created
- */        
-router.post("/student/register", authenticate, authorize(Role.admin, Role.coach), registerStudent);
 
 /**
  * @openapi
