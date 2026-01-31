@@ -12,16 +12,20 @@ export const openApiSpec = swaggerJSDoc({
     ],
     tags: [
       {
-        name: "Admin",
-        description: "Admin-only endpoints",
-      },
-      {
         name: "Auth",
         description: "Auth endpoints",
       },
       {
-        name: "User",
-        description: "User endpoints",
+        name: "Student",
+        description: "Student endpoints",
+      },
+      {
+        name: "Coach",
+        description: "Coach endpoints",
+      },
+      {
+        name: "Event",
+        description: "Event endpoints",
       },
     ],
     security: [{ cookieAuth: [] }],

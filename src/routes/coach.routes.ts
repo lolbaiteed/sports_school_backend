@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../middleware/auth";
 import { authorize } from "../middleware/authorize";
 import { Role } from '../generated/prisma/client';
-import { editCoach, deleteCoach } from "../controllers/coach.controller";
+import { editCoach, deleteCoach, addCoach } from "../controllers/coach.controller";
 
 const router = Router();
 
@@ -89,6 +89,98 @@ const router = Router();
  */
 router.patch('/coach/:id', authenticate, authorize(Role.admin), editCoach);
 
+/**
+ * @openapi
+ * /api/coach/add:
+ *  post:
+ *   summary: Add a new coach 
+ *   tags: [Coach]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *      application/json:
+ *        schema:
+ *         type: object
+ *         properties:
+ *          username:
+ *            type: string
+ *            required: true
+ *            example: newUser123
+ *          password:
+ *            type: string
+ *            required: true
+ *            example: newPass123
+ *          phoneNumber:
+ *            type: string
+ *            required: true
+ *            example: 71234567890
+ *          role:
+ *            type: string
+ *            required: true
+ *            example: coach
+ *          firstName:
+ *            type: string
+ *            required: true
+ *            example: John
+ *          lastName:
+ *            type: string
+ *            required: true
+ *            example: Doe
+ *          image:
+ *            $ref: '#/components/schemas/ImageUpload'
+ *
+ *   responses:
+ *     200:
+ *       description: Coach added successfully 
+ *       content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/ApiResponse'
+ *          example:
+ *            code: SUCCESS
+ *            message: Coach added successfully
+ *     400:
+ *        description: Bad Request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: BAD_REQUEST
+ *              message: username is required
+ *              details: []
+ *     401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: UNAUTHORIZED
+ *              message: "Authnticate token is missing or invalid"
+ *              details: []
+ *     403:
+ *        description: Forbidden
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              cdoe: FORBIDDEN
+ *              message: "You're not allowd to use this route"
+ *              details: []
+ *     409:
+ *        description: Conflict
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: CONFILICT
+ *              message: "Coach with this username already exists"
+ *              details: []
+ */
+router.post('/coach/add', authenticate, authorize(Role.admin), addCoach);
 
 /**
  * @openapi

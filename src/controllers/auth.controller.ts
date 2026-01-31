@@ -3,14 +3,15 @@ import { prisma } from "../db/prisma";
 import { encrypt, hashData, verifyHash } from "../services/auth.service";
 import { signAccessToken } from "../utils/jwt";
 import { Role } from "../generated/prisma/client";
-import { ApiError } from "../utils/ApiError";
 import { checkInput } from "../utils/checkReq";
+import { ApiError } from "../utils/ApiError"; 
 
 /**
  * STUFF ONLY
  */
 export const register = async (req: Request, res: Response) => {
   try {
+    if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
     const {
       username,
       password,
@@ -26,16 +27,24 @@ export const register = async (req: Request, res: Response) => {
       }
     } = req.body;
 
-    if (!username || !password || !reqRole) {
-      return res.status(400).json({ message: "Missing fields" });
+    interface RegisterBody {
+      username: string,
+      password: string,
+      phoneNumber: string,
+      role: Role,
+      firstName: string,
+      lastName: string,
     }
+
+    const requiredFields = { username, password, reqRole, phoneNumber, role: reqRole, firstName, lastName } as RegisterBody;
+    checkInput(requiredFields);
 
     function isValidRole(role: unknown): role is Role {
       return Object.values(Role).includes(role as Role);
     }
 
     if (!isValidRole(reqRole)) {
-      return res.status(400).json({ message: "Invalid role value" });
+      throw new ApiError(400, "BAD_REQUEST", `role ${reqRole} is not a valid role`);
     }
 
     const existingUser = await prisma.user.findFirst({
@@ -43,13 +52,13 @@ export const register = async (req: Request, res: Response) => {
     });
 
     if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
+      throw new ApiError(409, "CONFLICT", "User already exists");
     }
 
     const hashedPassword = await hashData(password);
     const encryptedPhone = phoneNumber ? encrypt(phoneNumber) : null;
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         username,
         password: hashedPassword,
@@ -71,12 +80,18 @@ export const register = async (req: Request, res: Response) => {
     });
 
     return res.status(201).json({
-      id: user.id,
-      username: user.username,
-      role: user.role,
+      code: "SUCCESS",
+      message: "User created successfully"
     });
 
   } catch (error) {
+    if (error instanceof ApiError) {
+      return res.status(error.status).json({
+        code: error.code,
+        message:error.message,
+        details: error.details
+      });
+    }
     console.error(error);
     return res.status(500).json({
       message: "Internal server error",
@@ -84,333 +99,6 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-export const registerStudent = async (req: Request, res: Response) => {
-  try {
-    if (!req.body) return res.status(400).json({ error: "Empty body recieved" });
-    const {
-      firstName,
-      lastName,
-      dateOfBirth,
-      phoneNumber,
-      coachId,
-      image: {
-        mimeType,
-        size,
-        filename,
-        url,
-      }
-    } = req.body;
-
-    if (!lastName || !firstName || !dateOfBirth || !coachId) {
-      return res.status(400).json({ error: "Missing credentials" });
-    }
-    const phoneEnc = encrypt(phoneNumber);
-
-    const existingUser = await prisma.student.findUnique({
-      where: { phoneNumber: phoneEnc },
-    });
-
-    if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
-    }
-
-    const dateConverted = new Date(dateOfBirth);
-
-    const coach = await prisma.user.findUnique({
-      where: { id: coachId },
-    });
-
-    if (!coach) return res.status(400).json({ error: "Coach with this ID not exists" });
-
-    const student = await prisma.student.create({
-      data: {
-        firstName: firstName,
-        lastName: lastName,
-        dateOfBirth: dateConverted,
-        phoneNumber: phoneEnc,
-        photos: {
-          create: [
-            {
-              mimeType: mimeType,
-              size: size,
-              filename: filename,
-              url: url,
-            },
-          ],
-        },
-        coach: {
-          connect: { id: coach.id },
-        },
-      },
-    });
-
-    if (!student) return res.status(500).json({ error: "Cannot create student" });
-
-    res.status(201).json({
-      firstName: student.firstName,
-      lastName: student.lastName,
-      dateOfBirth: student.lastName,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const editCoach = async (req: Request, res: Response) => {
-  try {
-    if(!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
-
-    const {
-      username,
-      password,
-      phoneNumber,
-      role: reqRole,
-      firstName,
-      lastName,
-      imgId,
-      image,
-    } = req.body;
-
-    const coachId = Number(req.params.id);
-
-    if (Number.isNaN(coachId)) {
-      throw new ApiError(400, "BAD_REQUEST", "CoachId must be a number");
-    };
-
-    const coach = await prisma.user.findUnique({
-      where: {id: coachId, role: Role.coach},
-    });
-
-    if (!coach) {
-      throw new ApiError(404, "NOT_FOUND", "Coach not found");
-    }
-
-    function isValidRole(role: unknown): role is Role {
-      return Object.values(Role).includes(role as Role);
-    }
-
-    if (reqRole) {
-      if (!isValidRole(reqRole)) {
-        throw new ApiError(400, "BAD_REQUEST", "Invalid role value");
-      }
-    } 
-
-    const { mimeType, size, filename, url } = image ?? {};
-
-    const hashedPassword = password ? await hashData(password) : undefined;
-    const encryptedPhone = phoneNumber ? encrypt(phoneNumber) : undefined;
-
-    await prisma.user.update({
-      where: { id: coach.id },
-      data: {
-        username: username || undefined, 
-        password: hashedPassword, 
-        phoneNumber: encryptedPhone,
-        role: reqRole || undefined, 
-        firstName: firstName || undefined, 
-        lastName: lastName || undefined, 
-        photos: image ? {
-          update: [
-            {
-              where: { id: imgId.id },
-              data: {
-                mimeType: mimeType,
-                size: size,
-                url: url,
-                filename: filename,
-              },
-            },
-          ],
-        } : undefined,
-      },
-    });
-
-    return res.status(200).json({ message: "Coach updated" });
-
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        details: error.details
-      });
-    }
-    return res.status(500).json({ message: error });
-  }
-};
-
-export const addEvent = async (req: Request, res: Response) => {
-  try {
-    if (!req.body || Object.keys(req.body).length === 0) {
-      throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty/null");
-    }
-
-    interface AddEventBody {
-      eventName: string,
-      latitude: number,
-      longitude: number,
-      startDate: string,
-      endDate: string,
-      image?: {
-        mimeType: string,
-        size: number,
-        filename: string,
-        url: string
-      },
-    }
-
-    const {
-      eventName,
-      latitude,
-      longitude,
-      startDate,
-      endDate,
-      image,
-    } = req.body as AddEventBody;
-
-    const requiredFields = { eventName, latitude, longitude, startDate, endDate};
-
-    checkInput(requiredFields);
-    await prisma.event.create({
-      data: {
-        eventName: eventName,
-        latitude: latitude,
-        longitude: longitude,
-        startDate: startDate,
-        endDate: endDate,
-        ...(image && {
-          photos: {
-            create: {
-              mimeType: image.mimeType,
-              size: image.size,
-              filename: image.filename,
-              url: image.url,
-            }, 
-          },
-        }),
-      },
-    });
-
-    return res.status(201).json({ message: "Event added successfully"});
-
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        details: error.details
-      });
-    }
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const deleteStudent = async (req: Request, res: Response) => {
-  try {
-    const studentId = Number(req.params.id);
-
-    if (Number.isNaN(studentId)) {
-      throw new ApiError(400, "BAD_REQUEST", "Student id must be a number");
-    };
-
-    if (!studentId) throw new ApiError(400, "BAD_REQUEST", "Sutdent id must be set");
-
-    const studentExists = await prisma.student.findUnique({
-      where: { id: studentId }
-    });
-
-    if (!studentExists) throw new ApiError(404, "NOT_FOUND", "Student not exists"); 
-
-    await prisma.student.delete({
-      where: { id: studentExists.id },
-    });
-
-    return res.status(200).json({ message: "Student deleted successfully" });
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        details: error.details
-      });
-    }
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const deleteCoach = async (req: Request, res: Response) => {
-  try {
-    const coachId = Number(req.params.id);
-
-    if(Number.isNaN(coachId)) {
-      throw new ApiError(400, "BAD_REQUEST", "Coach id must be a number");
-    }
-
-    const coachExists = await prisma.user.findFirst({
-      where: { id: coachId, role: Role.coach },
-    });
-
-    if (!coachExists) throw new ApiError(404, "NOT_FOUND", "Coach not exists"); 
-
-    await prisma.user.delete({
-      where: { id: coachExists.id, role: Role.coach },
-    });
-
-    return res.status(200).json({ message: "Coach deleted successfully" });
-  } catch (error) {
-    if(error instanceof ApiError) {
-      return res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        details: error.details
-      });
-    }
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const editEvent = async (req: Request, res: Response) => {
-  try {
-    if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
-
-    const {
-      eventName,
-      latitude,
-      longitude,
-      startDate,
-      endDate,
-      eventId,
-      image,
-    } = req.body;
-
-    const { mimeType, size, filename, url } = image ?? {};
-
-    const newEvent = await prisma.event.update({
-      where: { id: eventId },
-      data: {
-        eventName: eventName,
-        latitude: latitude,
-        longitude: longitude,
-        startDate: startDate,
-        endDate: endDate,
-        photos: image ? {
-          create: {
-            mimeType: mimeType,
-            size: size,
-            filename: filename,
-            url: url,
-          },
-        } : undefined,
-      },
-    });
-
-    return res.status(200).json(newEvent);
-
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
 
 /**
  * PUBLIC
@@ -429,28 +117,31 @@ export const login = async (req: Request, res: Response) => {
       res.redirect('/dashboard');
     }
   } else {
-    if (!req.body) {
-      return res.status(400).json({ message: "Missing credentials" });
-    }
+    if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
 
     const { username, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ message: "Missing credentials" });
+    interface loginBody {
+      username: string,
+      password: string,
     }
+
+    const requiredFields = { username, password } as loginBody;
+
+    checkInput(requiredFields);
 
     const user = await prisma.user.findFirst({
       where: { username: username },
     });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      throw new ApiError(401, "UNAUTHORIZED", "Invalid username");
     }
 
     const valid = await verifyHash(password, user.password);
 
     if (!valid) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      throw new ApiError(401, "UNAUTHORIZED", "Invalid password");
     }
 
     const token = signAccessToken(user.id, user.role);

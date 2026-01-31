@@ -4,7 +4,9 @@ import path from "path";
 import swaggerUi from 'swagger-ui-express';
 import authRoutes from "./routes/auth.routes";
 import fileRoutes from './routes/file.routes';
-import adminRoutes from './routes/admin.routes';
+import studentRoutes from './routes/student.routes';
+import coachRoutes from './routes/coach.routes';
+import eventRoutes from './routes/event.routes';
 import { prisma } from './db/prisma';
 import { Role } from './generated/prisma/client';
 import { decrypt } from "./services/auth.service";
@@ -19,11 +21,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use("/uploads", express.static("uploads"));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
+if (process.env.NODE_ENV !== 'production') {
+  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
+};
 
 app.use("/api/auth", authRoutes);
 app.use("/api/files", fileRoutes);
-app.use("/admin", adminRoutes);
+app.use("/api/coach", coachRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/event", eventRoutes);
 
 app.get('/', (_req, res) => {
   res.render('pages/index');
@@ -74,6 +80,6 @@ app.get('/coaches', async (_req, res) => {
   }
 });
 
-//TODO: structure routes, add export to exel, coach_dashboard, add recreating/autodelete outdated tokens
+//TODO: add export to exel, coach_dashboard, add recreating/autodelete outdated tokens
 
 export default app;

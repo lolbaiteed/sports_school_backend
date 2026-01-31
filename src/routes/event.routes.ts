@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../middleware/auth';
 import { authorize } from '../middleware/authorize';
 import { Role } from '../generated/prisma/client';
-import { editEvent, addEvent } from '../controllers/event.controller';
+import { editEvent, addEvent, deleteEvent } from '../controllers/event.controller';
 
 const router = Router();
 
@@ -166,8 +166,63 @@ router.patch('/event/:id', authenticate, authorize(Role.admin, Role.coach), edit
  *                code: FORBIDDEN
  *                message: "You're not allowed to use this route"
  *                details: []
- *
  */
 router.post('/event/add', authenticate, authorize(Role.admin, Role.coach), addEvent);
+
+/**
+ * @openapi
+ *  /api/event/{eventId}:
+ *   delete:
+ *    summary: Delete event
+ *    tags: 
+ *      [Event]
+ *    parameters:
+ *      - name: eventId
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: integer
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: SUCCESS
+ *              message: Event deleted successfully
+ *      404:
+ *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: NOT_FOUND
+ *              message: "Event is not exists"
+ *              details: []
+ *      401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: UNAUTHORIZED
+ *              message: "Authnticate token is missing or invalid"
+ *              details: []
+ *      403:
+ *        description: Forbidden
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: FORBIDDEN
+ *              message: "You're not allowd to use this route"
+ *              details: []
+ */
+router.delete('/event/:id', authenticate, authorize(Role.admin), deleteEvent);
 
 export default router;

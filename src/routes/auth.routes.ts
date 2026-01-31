@@ -14,6 +14,13 @@ const router = Router();
  *    responses:
  *      201:
  *       description: Created 
+ *       content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/ApiResponse'
+ *          example:
+ *            code: CREATED
+ *            message: User created successfully
  */
 router.post("/register", authenticate, authorize(Role.admin), register);
 
@@ -27,6 +34,13 @@ router.post("/register", authenticate, authorize(Role.admin), register);
  *    responses:
  *      200:
  *        description: logged in
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ApiResponse'
+ *            example:
+ *              code: SUCCESS
+ *              message: Logged in
  */
 router.post("/login", login);
 
