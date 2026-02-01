@@ -1,33 +1,28 @@
-import { Router, Request, Response } from 'express';
-import { upload } from '../utils/multer';
-import { ApiError } from '../utils/ApiError';
+import { Router } from 'express';
+import { upload, uploadImage } from '../controllers/file.controller';
+import { Role } from '../generated/prisma/client';
+import { authenticate } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 
 const router = Router();
 
 //TODO: Write docs for upload route
-router.post("/upload", upload.single("avatar"), (req: Request, res: Response) => {
-  try {
-    if(!req.file) throw new ApiError(400, "BAD_REQUEST", "No file sended");
-    const file = req.file;
-    
-    res.json({
-      filename: file.filename,
-      mimeType: file.mimetype,
-      size: file.size,
-      url: file.path, 
-    });
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        details: error.stack
-      });
-    } 
-  }
-});
+/**
+* @openapi
+* /api/files/uploadImage:
+*   post:
+*     summary: Upload images to server
+*     tags: [Files]
+*/
+router.post("/uploadImage",authenticate, authorize(Role.admin, Role.coach), upload.single("avatar"), uploadImage);
+
+//TODO: finish show route and add docs
+// router.post("/:filename");
+
+// TODO: finish delete route and add docs
+// router.delete("/delete/:id");
 
 //TODO: finish the route and add docs
-// router.post("/download")
+// router.post("/download");
 
 export default router;

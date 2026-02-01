@@ -89,11 +89,11 @@ export const editEvent = async (req: Request, res: Response) => {
       startDate,
       endDate,
       image,
+      imgId,
     } = req.body;
 
     const { mimeType, size, filename, url } = image ?? {};
 
-    //FIX: we need to update photo if exists or add
     await prisma.event.update({
       where: { id: eventId },
       data: {
@@ -103,11 +103,20 @@ export const editEvent = async (req: Request, res: Response) => {
         startDate: startDate,
         endDate: endDate,
         photos: image ? {
-          create: {
-            mimeType: mimeType,
-            size: size,
-            filename: filename,
-            url: url,
+          upsert: {
+            where: {id: imgId.id },
+            update: {
+              mimeType,
+              size,
+              filename,
+              url,
+            },
+            create: {
+              mimeType: mimeType,
+              size: size,
+              filename: filename,
+              url: url,
+            },
           },
         } : undefined,
       },

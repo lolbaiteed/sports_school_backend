@@ -3,6 +3,7 @@ import { authenticate } from "../middleware/auth";
 import { authorize } from "../middleware/authorize";
 import { Role } from '../generated/prisma/client';
 import { editCoach, deleteCoach, addCoach } from "../controllers/coach.controller";
+import { upload } from "../controllers/file.controller";
 
 const router = Router();
 
@@ -87,7 +88,7 @@ const router = Router();
  *              message: "User with this ID not exists"
  *              details: []
  */
-router.patch('/coach/:id', authenticate, authorize(Role.admin), editCoach);
+router.patch('/coach/:id', authenticate, authorize(Role.admin), upload.single("avatar"), editCoach);
 
 /**
  * @openapi
@@ -180,7 +181,7 @@ router.patch('/coach/:id', authenticate, authorize(Role.admin), editCoach);
  *              message: "Coach with this username already exists"
  *              details: []
  */
-router.post('/coach/add', authenticate, authorize(Role.admin), addCoach);
+router.post('/coach/add', authenticate, authorize(Role.admin), upload.single("avatar"), addCoach);
 
 /**
  * @openapi

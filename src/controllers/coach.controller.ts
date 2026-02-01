@@ -1,9 +1,10 @@
 import { Response, Request } from "express";
 import { prisma } from '../db/prisma';
 import { ApiError } from "../utils/ApiError";
-import { Role } from '../generated/prisma/client';
+import { Role, Discipline } from '../generated/prisma/client';
 import { hashData, encrypt } from "../services/auth.service";
 import { checkInput } from "../utils/checkReq";
+import { isValidDiscipline, isValidRole } from "../services/verify.service";
 
 export const editCoach = async (req: Request, res: Response) => {
   try {
@@ -14,11 +15,12 @@ export const editCoach = async (req: Request, res: Response) => {
       password,
       phoneNumber,
       role: reqRole,
+      discipline: reqDiscipline,
       firstName,
       lastName,
-      imgId,
-      image,
     } = req.body;
+
+    const image = req.file;
 
     const coachId = Number(req.params.id);
 
@@ -28,15 +30,21 @@ export const editCoach = async (req: Request, res: Response) => {
 
     const coach = await prisma.user.findUnique({
       where: {id: coachId, role: Role.coach},
+      include: {
+        photos: {
+          where: {
+            filename: { startsWith: "avatar" },
+          },
+          take: 1,
+        },
+      }
     });
 
     if (!coach) {
       throw new ApiError(404, "NOT_FOUND", "Coach not found");
     }
 
-    function isValidRole(role: unknown): role is Role {
-      return Object.values(Role).includes(role as Role);
-    }
+    const oldPhoto = coach.photos[0];
 
     if (reqRole) {
       if (!isValidRole(reqRole)) {
@@ -44,12 +52,15 @@ export const editCoach = async (req: Request, res: Response) => {
       }
     } 
 
-    const { mimeType, size, filename, url } = image ?? {};
+    if (reqDiscipline) {
+      if (!isValidDiscipline(reqDiscipline)) {
+        throw new ApiError(400, "BAD_REQUEST", "Invalid discipline value");
+      }
+    }
 
     const hashedPassword = password ? await hashData(password) : undefined;
     const encryptedPhone = phoneNumber ? encrypt(phoneNumber) : undefined;
 
-    //FIX: we need to update photo if it exists or add
     await prisma.user.update({
       where: { id: coach.id },
       data: {
@@ -59,18 +70,23 @@ export const editCoach = async (req: Request, res: Response) => {
         role: reqRole || undefined, 
         firstName: firstName || undefined, 
         lastName: lastName || undefined, 
+        discipline: reqDiscipline || undefined,
         photos: image ? {
-          update: [
-            {
-              where: { id: imgId.id },
-              data: {
-                mimeType: mimeType,
-                size: size,
-                url: url,
-                filename: filename,
-              },
+          upsert: {
+            where: { id: oldPhoto.id },
+            update: {
+              mimeType: image.mimetype,
+              size: image.size,
+              url: image.path,
+              filename: image.filename,
             },
-          ],
+            create: {
+              mimeType: image.mimetype,
+              size: image.size,
+              url: image.path,
+              filename: image.filename,
+            },
+          },
         } : undefined,
       },
     });
@@ -137,8 +153,10 @@ export const addCoach = async (req: Request, res: Response) => {
       role: reqRole,
       firstName,
       lastName,
-      image,
+      discipline: reqDiscipline,
     } = req.body;
+
+    const image = req.file;
 
     interface CoachRequestBody {
       username: string,
@@ -147,12 +165,12 @@ export const addCoach = async (req: Request, res: Response) => {
       role: Role,
       firstName: string,
       lastName: string,
+      discipline: Discipline,
     }
 
-    const requiredFiels = { username, password, phoneNumber, role: reqRole, firstName, lastName} as CoachRequestBody;
+    const requiredFiels = { username, password, phoneNumber, role: reqRole, firstName, lastName, discipline: reqDiscipline } as CoachRequestBody;
     checkInput(requiredFiels);
 
-    const { mimeType, size, filename, url } = image ?? {};
 
     const CoachExists = await prisma.user.findUnique({
       where: { username: username },
@@ -162,7 +180,7 @@ export const addCoach = async (req: Request, res: Response) => {
       throw new ApiError(409, "CONFLICT", "Coach with this username already exists");
     };
 
-    const hashedPassword = hashData(password);
+    const hashedPassword = await hashData(password);
     const phoneEnc = encrypt(phoneNumber);
 
     await prisma.user.create({
@@ -173,14 +191,15 @@ export const addCoach = async (req: Request, res: Response) => {
         role: Role.coach,
         firstName: firstName,
         lastName: lastName,
+        discipline: reqDiscipline,
         ...(image && {
           photos: {
             create: [
               {
-                url: url,
-                mimeType: mimeType,
-                filename: filename,
-                size: size,
+                url: image.path,
+                mimeType: image.mimetype,
+                filename: image.filename,
+                size: image.size,
               },
             ],
           },

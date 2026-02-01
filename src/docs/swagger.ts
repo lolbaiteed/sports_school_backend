@@ -27,6 +27,10 @@ export const openApiSpec = swaggerJSDoc({
         name: "Event",
         description: "Event endpoints",
       },
+      {
+        name: "Files",
+        description: "Files endpoints",
+      },
     ],
     security: [{ cookieAuth: [] }],
     components: {

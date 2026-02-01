@@ -187,7 +187,7 @@ document.getElementById('athleteForm').onsubmit = async (e) => {
     const imgData = new FormData();
     imgData.append("avatar", img);
 
-    const imgResp = await fetch("/api/files/upload", {
+    const imgResp = await fetch("/api/files/uploadImage", {
       method: "POST",
       body: imgData,
     });
