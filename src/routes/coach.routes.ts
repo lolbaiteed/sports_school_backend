@@ -22,31 +22,32 @@ const router = Router();
  *     requestBody:
  *      required: false 
  *      content:
- *        application/json:
+ *        multipart/form-data:
  *          schema:
  *            type: object
  *            properties:
- *              username:
- *                type: string
- *                example: newusername
- *              password:
- *                type: string
- *                example: newpass123
- *                description: Only if changing password
- *              firstName:
- *                type: string
- *                example: John
- *              lastName:
- *                type: string
- *                example: Doe
- *              phoneNumber:
- *                type: string
- *                example: +71234567890
- *              imgId:
- *                type: integer
- *              image:
- *                $ref: '#/components/schemas/ImageUpload'
- *                description: Must be obtained from /
+ *             file:
+ *               type: string
+ *               format: binary
+ *               description: Image to upload
+ *             username:
+ *               type: string
+ *               description: New coach username 
+ *             password:
+ *               type: string
+ *               description: New coach password
+ *             firstName:
+ *               type: string
+ *               description: New coach first name 
+ *             lastName:
+ *               type: string
+ *               description: New coach last name
+ *             role:
+ *               type: string
+ *               description: New coach role (admin, coach)
+ *             discipline:
+ *               type: string
+ *               description: New coach discipline
  *     responses:
  *      200:
  *        description: Success
@@ -88,10 +89,10 @@ const router = Router();
  *              message: "User with this ID not exists"
  *              details: []
  */
-router.patch('/coach/:id', authenticate, authorize(Role.admin), upload.single("avatar"), editCoach);
+router.patch('/:id', authenticate, authorize(Role.admin), upload.single("avatar"), editCoach);
 
 /**
- * @openapi
+  @openapi
  * /api/coach/add:
  *  post:
  *   summary: Add a new coach 
@@ -99,37 +100,44 @@ router.patch('/coach/:id', authenticate, authorize(Role.admin), upload.single("a
  *   requestBody:
  *    required: true
  *    content:
- *      application/json:
- *        schema:
- *         type: object
- *         properties:
- *          username:
- *            type: string
- *            required: true
- *            example: newUser123
- *          password:
- *            type: string
- *            required: true
- *            example: newPass123
- *          phoneNumber:
- *            type: string
- *            required: true
- *            example: 71234567890
- *          role:
- *            type: string
- *            required: true
- *            example: coach
- *          firstName:
- *            type: string
- *            required: true
- *            example: John
- *          lastName:
- *            type: string
- *            required: true
- *            example: Doe
- *          image:
- *            $ref: '#/components/schemas/ImageUpload'
- *
+ *     multipart/form-data:
+ *      schema:
+ *        type: object
+ *        required:
+ *         - file
+ *         - username
+ *         - password
+ *         - phoneNumber
+ *         - role
+ *         - firstName
+ *         - lastName
+ *         - discipline
+ *        properties:
+ *         file:
+ *          type: string
+ *          format: binary
+ *          description: image to upload
+ *         username:
+ *          type: string
+ *          description: Coach username 
+ *         password:
+ *          type: string
+ *          description: Coach password 
+ *         phoneNumber:
+ *          type: string
+ *          description: Coach phone number (712345678980) 
+ *         role:
+ *          type: string
+ *          description: Role (Coach, admin) 
+ *         firstName:
+ *          type: string
+ *          description: Coach first name 
+ *         lastName:
+ *          type: string
+ *          description: Coach last name 
+ *         discipline:
+ *          type: string
+ *          description: Discipline 
  *   responses:
  *     200:
  *       description: Coach added successfully 
@@ -181,7 +189,7 @@ router.patch('/coach/:id', authenticate, authorize(Role.admin), upload.single("a
  *              message: "Coach with this username already exists"
  *              details: []
  */
-router.post('/coach/add', authenticate, authorize(Role.admin), upload.single("avatar"), addCoach);
+router.post('/add', authenticate, authorize(Role.admin), upload.single("avatar"), addCoach);
 
 /**
  * @openapi
@@ -236,6 +244,6 @@ router.post('/coach/add', authenticate, authorize(Role.admin), upload.single("av
  *                message: "You're not allowd to use this route"
  *                details: []
  */
-router.delete('/coach/:id', authenticate, authorize(Role.admin), deleteCoach);
+router.delete('/:id', authenticate, authorize(Role.admin), deleteCoach);
 
 export default router; 

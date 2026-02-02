@@ -8,16 +8,16 @@ import { isValidDiscipline, isValidRole } from "../services/verify.service";
 
 export const editCoach = async (req: Request, res: Response) => {
   try {
-    if(!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
+    if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
 
     const {
       username,
       password,
-      phoneNumber,
-      role: reqRole,
-      discipline: reqDiscipline,
       firstName,
       lastName,
+      discipline: reqDiscipline,
+      role: reqRole,
+      phoneNumber
     } = req.body;
 
     const image = req.file;
@@ -29,7 +29,7 @@ export const editCoach = async (req: Request, res: Response) => {
     };
 
     const coach = await prisma.user.findUnique({
-      where: {id: coachId, role: Role.coach},
+      where: { id: coachId, role: Role.coach },
       include: {
         photos: {
           where: {
@@ -50,7 +50,7 @@ export const editCoach = async (req: Request, res: Response) => {
       if (!isValidRole(reqRole)) {
         throw new ApiError(400, "BAD_REQUEST", "Invalid role value");
       }
-    } 
+    }
 
     if (reqDiscipline) {
       if (!isValidDiscipline(reqDiscipline)) {
@@ -64,12 +64,12 @@ export const editCoach = async (req: Request, res: Response) => {
     await prisma.user.update({
       where: { id: coach.id },
       data: {
-        username: username || undefined, 
-        password: hashedPassword, 
+        username: username || undefined,
+        password: hashedPassword,
         phoneNumber: encryptedPhone,
-        role: reqRole || undefined, 
-        firstName: firstName || undefined, 
-        lastName: lastName || undefined, 
+        role: reqRole || undefined,
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
         discipline: reqDiscipline || undefined,
         photos: image ? {
           upsert: {
@@ -112,7 +112,7 @@ export const deleteCoach = async (req: Request, res: Response) => {
   try {
     const coachId = Number(req.params.id);
 
-    if(Number.isNaN(coachId)) {
+    if (Number.isNaN(coachId)) {
       throw new ApiError(400, "BAD_REQUEST", "Coach id must be a number");
     }
 
@@ -120,7 +120,7 @@ export const deleteCoach = async (req: Request, res: Response) => {
       where: { id: coachId, role: Role.coach },
     });
 
-    if (!coachExists) throw new ApiError(404, "NOT_FOUND", "Coach not exists"); 
+    if (!coachExists) throw new ApiError(404, "NOT_FOUND", "Coach not exists");
 
     await prisma.user.delete({
       where: { id: coachExists.id, role: Role.coach },
@@ -131,7 +131,7 @@ export const deleteCoach = async (req: Request, res: Response) => {
       message: "Coach deleted successfully"
     });
   } catch (error) {
-    if(error instanceof ApiError) {
+    if (error instanceof ApiError) {
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
@@ -144,7 +144,7 @@ export const deleteCoach = async (req: Request, res: Response) => {
 
 export const addCoach = async (req: Request, res: Response) => {
   try {
-    if(!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
+    if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
 
     const {
       username,
@@ -157,7 +157,7 @@ export const addCoach = async (req: Request, res: Response) => {
     } = req.body;
 
     const image = req.file;
-
+    ;
     interface CoachRequestBody {
       username: string,
       password: string,
@@ -176,7 +176,7 @@ export const addCoach = async (req: Request, res: Response) => {
       where: { username: username },
     });
 
-    if(CoachExists) {
+    if (CoachExists) {
       throw new ApiError(409, "CONFLICT", "Coach with this username already exists");
     };
 
@@ -206,12 +206,10 @@ export const addCoach = async (req: Request, res: Response) => {
         }),
       }
     });
-
     return res.status(201).json({
       code: "CREATED",
       message: "Coach created successfully"
     });
-    
   } catch (error) {
     if (error instanceof ApiError) {
       return res.status(error.status).json({
@@ -223,7 +221,7 @@ export const addCoach = async (req: Request, res: Response) => {
     return res.status(500).json({
       code: "INTERNAL_SERVER_ERROR",
       message: "Unexpedted error, try again",
-      details: [] 
+      details: []
     });
   }
 };

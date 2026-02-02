@@ -11,6 +11,11 @@ const router = Router();
  * /api/auth/register:
  *  post:
  *    tags: [Auth]
+ *    reqestBody:
+ *      content:
+ *        application/json:
+ *          schema:
+ *            
  *    responses:
  *      201:
  *       description: Created 
@@ -24,13 +29,26 @@ const router = Router();
  */
 router.post("/register", authenticate, authorize(Role.admin), register);
 
-
 /**
  * @openapi
  * /api/auth/login:
  *  post:
  *    tags: [Auth]
  *    security: []
+ *    requestBody:
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              username:
+ *                type: string
+ *                required: true
+ *                example: SomeUsername123
+ *              password:
+ *                type: string
+ *                required: true
+ *                example: SomePass123
  *    responses:
  *      200:
  *        description: logged in

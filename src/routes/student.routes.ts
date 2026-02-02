@@ -3,6 +3,7 @@ import { authorize } from "../middleware/authorize";
 import { authenticate } from "../middleware/auth";
 import { Role } from '../generated/prisma/client';
 import { deleteStudent, editStudent, registerStudent } from "../controllers/student.controller";
+import { upload } from "../controllers/file.controller";
 
 const router = Router();
 
@@ -59,7 +60,7 @@ const router = Router();
  *                message: "You're not allowed to use this route"
  *                details: []
  */
-router.delete('/student/:id', authenticate, authorize(Role.admin, Role.coach), deleteStudent);
+router.delete('/:id', authenticate, authorize(Role.admin, Role.coach), deleteStudent);
 
 /**
  * @openapi
@@ -69,32 +70,40 @@ router.delete('/student/:id', authenticate, authorize(Role.admin, Role.coach), d
  *      summary: Add a new student
  *      requestBody:
  *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                phoneNumber:
- *                  type: string
- *                  description: Phone number of student
- *                  example: 71234567890
- *                  required: true
- *                lastName:
- *                  type: string
- *                  description: Last name of student
- *                  example: Doe
- *                  required: true
- *                fistName:
- *                  type: string
- *                  description: First name of student
- *                  example: John
- *                  required: true
- *                dateOfBirth:
- *                  type: string
- *                  example: 12-01-2011
- *                  description: Student's date of birth
- *                image:
- *                  $ref: '#/components/schemas/ImageUpload'
- *                  description: Must be obtained from /
+ *          multipart/form-data:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - file
+ *              - firstName
+ *              - lastName
+ *              - dateOfBirth
+ *              - phoneNumber
+ *              - coachId
+ *              - discipline
+ *            properties:
+ *              file:
+ *                type: string
+ *                format: binary
+ *                description: Image to upload
+ *              firstName:
+ *                type: string
+ *                description: First name of student
+ *              lastName:
+ *                type: string
+ *                description: Last name of student
+ *              dateOfBirth:
+ *                type: string
+ *                description: Student's date of birth (DD-MM-YYYY)
+ *              phoneNumber:
+ *                type: string
+ *                description: Student's phone number
+ *              coachId:
+ *                type: integer
+ *                description: Id of coach
+ *              discipline:
+ *                type: string
+ *                description: Student's discipline
  *      responses:
  *        201:
  *          description: Created
@@ -146,7 +155,9 @@ router.delete('/student/:id', authenticate, authorize(Role.admin, Role.coach), d
  *                message: Student with this phone number already exists
  *                details: []
  */        
-router.post("/student/add", authenticate, authorize(Role.admin, Role.coach), registerStudent);
+router.post("/add",
+            authenticate, authorize(Role.admin, Role.coach), upload.single("avatar"),
+            registerStudent);
 
 /**
  * @openapi
@@ -161,29 +172,29 @@ router.post("/student/add", authenticate, authorize(Role.admin, Role.coach), reg
  *        description: Id of student to edit
  *    requestBody:
  *      content:
- *        application/json:
+ *        multipart/form-data:
  *          schema:
  *            type: object
  *            properties:
- *              phoneNumber:
+ *              file:
  *                type: string
- *                description: Phone number of student
- *                example: 71234567890
+ *                format: binary
+ *                description: Image to upload
  *              firstName:
  *                type: string
- *                description: First name of student
- *                example: John
+ *                description: New student's first name
  *              lastName:
  *                type: string
- *                description: Last name of student
- *                example: Doe
+ *                description: New student's last name
+ *              phoneNumber:
+ *                type: string
+ *                description: New student's phone number
+ *              discipline:
+ *                type: string
+ *                description: New student's discipline
  *              dateOfBirth:
  *                type: string
- *                description: Student's date of birth
- *                example: 12-01-2011
- *              image:
- *                $ref: '#/components/schemas/ImageUpload'
- *                description: Must be obtained from /
+ *                description: New student's date of birth (DD-MM-YYYY)
  *    responses:
  *      200:
  *        description: Success
@@ -235,6 +246,8 @@ router.post("/student/add", authenticate, authorize(Role.admin, Role.coach), reg
  *              message: Student with this ID not exists
  *              details: []
  */
-router.patch("/student/:id", authenticate, authorize(Role.admin, Role.coach), editStudent);
+router.patch("/:id",
+             authenticate, authorize(Role.admin, Role.coach), upload.single("avatar"),
+             editStudent);
 
 export default router;

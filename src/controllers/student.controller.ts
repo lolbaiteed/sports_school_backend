@@ -5,6 +5,7 @@ import { prisma } from '../db/prisma';
 import { encrypt } from "../services/auth.service";
 import { Discipline } from "../generated/prisma/client";
 import { isValidDiscipline } from "../services/verify.service";
+import { MulterError } from "multer";
 
 export const registerStudent = async (req: Request, res: Response) => {
   try {
@@ -16,8 +17,9 @@ export const registerStudent = async (req: Request, res: Response) => {
       phoneNumber,
       coachId,
       discipline: disciplineReq,
-      image,
     } = req.body;
+
+    const image = req.file;
 
     interface registerStudentBody {
       firstName: string,
@@ -30,8 +32,6 @@ export const registerStudent = async (req: Request, res: Response) => {
 
     const requiredFileds = { firstName, lastName, dateOfBirth, phoneNumber, coachId, discipline: disciplineReq } as registerStudentBody;
     checkInput(requiredFileds);
-
-    const { mimeType, size, filename, url } = image ?? {};
 
     const phoneEnc = encrypt(phoneNumber);
 
@@ -62,10 +62,10 @@ export const registerStudent = async (req: Request, res: Response) => {
           photos: {
             create: [
               {
-                mimeType: mimeType,
-                size: size,
-                filename: filename,
-                url: url,
+                mimeType: image.mimetype,
+                size: image.size,
+                filename: image.filename,
+                url: image.path,
               },
             ],
           },
@@ -75,13 +75,17 @@ export const registerStudent = async (req: Request, res: Response) => {
         },
       },
     });
-
     res.status(201).json({
       code: "CREATED",
       message: "Student created successfully"
     });
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof MulterError) {
+      return res.status(400).json({
+        code: "BAD_REQUEST",
+        message: error.message
+      });
+    } else if (error instanceof ApiError) {
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
@@ -139,8 +143,6 @@ export const editStudent = async (req: Request, res: Response) => {
       lastName,
       dateOfBirth,
       discipline: disciplineReq,
-      oldImgId,
-      image
     } = req.body;
 
     const id = Number(req.params.id);
@@ -149,17 +151,25 @@ export const editStudent = async (req: Request, res: Response) => {
       throw new ApiError(400, "BAD_REQUEST", "StudentId must be a number");
     };
 
-    const { mimeType, size, filename, url } = image ?? {};
+    const image = req.file;
 
     if(!isValidDiscipline(disciplineReq)) {
       throw new ApiError(400, "BAD_REQUEST", "Unknown discipline");
     }
 
     const oldData = await prisma.student.findUnique({
-      where: {id},
+      where: { id },
+      include: {
+        photos: {
+          where: { filename: { startsWith: "avatar" } },
+          take: 1,
+        },
+      },
     });
 
     if (!oldData) throw new ApiError(404, "NOT_FOUND", "Student is not exists");
+
+    const oldImage = oldData.photos[0];
 
     const phoneEnc = phoneNumber ? encrypt(phoneNumber) : undefined;
 
@@ -173,18 +183,18 @@ export const editStudent = async (req: Request, res: Response) => {
         discipline: disciplineReq || undefined,
         photos: image ? {
           upsert: {
-            where: { id: oldImgId },
+            where: { id: oldImage.id },
             update: {
-              mimeType,
-              size,
-              filename,
-              url,
+              mimeType: image.mimetype,
+              size: image.size,
+              filename: image.filename,
+              url: image.path,
             },
             create: {
-              mimeType,
-              size,
-              filename,
-              url,
+              mimeType: image.mimetype,
+              size: image.size,
+              filename: image.filename,
+              url: image.path,
             },
           },
         } : undefined,
@@ -192,7 +202,12 @@ export const editStudent = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof MulterError) {
+      return res.status(400).json({
+        code: "BAD_REQUEST",
+        message: error.message
+      });
+    } else if (error instanceof ApiError) {
       return res.status(error.status).json({
         code: error.code,
         message: error.message,

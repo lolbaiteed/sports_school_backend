@@ -3,6 +3,7 @@ import { authenticate } from '../middleware/auth';
 import { authorize } from '../middleware/authorize';
 import { Role } from '../generated/prisma/client';
 import { editEvent, addEvent, deleteEvent } from '../controllers/event.controller';
+import { upload } from '../controllers/file.controller';
 
 const router = Router();
 
@@ -22,29 +23,29 @@ const router = Router();
  *     requestBody:
  *      required: false 
  *      content:
- *        application/json:
+ *        multipart/form-data:
  *          schema:
  *            type: object
  *            properties:
- *             eventName:
- *              type: string
- *              description: The name of event
- *              example: Olympic games
- *             latitude:
- *              type: number 
- *              description: coordinats of event place
- *             longitude:
- *              type: number
- *              description: coordinats of event place
- *             startDate:
- *              type: string
- *              description: Event start date
- *             endDate:
- *              type: string
- *              description: Event end date
- *             image:
- *               $ref: '#/components/schemas/ImageUpload'
- *               description: Must be obtained from /
+ *              eventName:
+ *                type: string
+ *                description: New name of event
+ *              latitude:
+ *                type: number
+ *                description: New latitude of event
+ *              longitude:
+ *                type: number
+ *                description: New longitude of event
+ *              startDate:
+ *                type: string
+ *                description: New event start date
+ *              endDate:
+ *                type: string 
+ *                description: New event end date
+ *              eventImage:
+ *                type: string
+ *                format: binary
+ *                description: New images from event
  *     responses:
  *       200:
  *         description: Success 
@@ -86,7 +87,9 @@ const router = Router();
  *              message: "User with this ID not exists"
  *              details: []
  */
-router.patch('/event/:id', authenticate, authorize(Role.admin, Role.coach), editEvent);
+router.patch('/:id',
+             authenticate, authorize(Role.admin, Role.coach), upload.array("eventPhoto", 5),
+             editEvent);
 
 /**
  * @openapi
@@ -96,36 +99,36 @@ router.patch('/event/:id', authenticate, authorize(Role.admin, Role.coach), edit
  *     tags:
  *      [Event]
  *     requestBody:
- *      required: true
  *      content:
- *        application/json:
+ *        multipart/form-data:
  *          schema:
  *            type: object
+ *            required:
+ *              - longitude
+ *              - latitude
+ *              - eventName
+ *              - startDate
+ *              - endDate
  *            properties:
  *              eventName:
  *                type: string
- *                required: true
  *                description: Event name
- *                example: Olympic games
  *              latitude:
- *                type: float
- *                required: true
- *                description: Latitude, must be in float (77.001054)
+ *                type: number
+ *                description: Event latitude
  *              longitude:
- *                type: float
- *                required: true
- *                description: Longitude, must be in float (43.382877)
+ *                type: number 
+ *                description: Event longitude
  *              startDate:
- *                type: date 
- *                required: true
+ *                type: string
  *                description: Event start date (DD-MM-YYYY)
  *              endDate:
- *                type: date
- *                required: true
+ *                type: string
  *                description: Event end date (DD-MM-YYYY)
- *              image:
- *                $ref: '#/components/schemas/ImageUpload'
- *                description: Must be obtained from /
+ *              eventImage:
+ *                type: string
+ *                format: binary
+ *                description: Event images
  *     responses:
  *       200:
  *         description: Success 
@@ -167,7 +170,9 @@ router.patch('/event/:id', authenticate, authorize(Role.admin, Role.coach), edit
  *                message: "You're not allowed to use this route"
  *                details: []
  */
-router.post('/event/add', authenticate, authorize(Role.admin, Role.coach), addEvent);
+router.post('/add',
+            authenticate, authorize(Role.admin, Role.coach), upload.array("eventPhoto", 5),
+            addEvent);
 
 /**
  * @openapi
@@ -223,6 +228,6 @@ router.post('/event/add', authenticate, authorize(Role.admin, Role.coach), addEv
  *              message: "You're not allowd to use this route"
  *              details: []
  */
-router.delete('/event/:id', authenticate, authorize(Role.admin), deleteEvent);
+router.delete('/:id', authenticate, authorize(Role.admin), deleteEvent);
 
 export default router;
