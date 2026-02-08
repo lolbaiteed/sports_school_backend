@@ -3,40 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportZone | Login</title>
+    <title>Bolashaq Olympic Center</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <header class="navbar">
+    <pre><%= JSON.stringify(students,null,2)%></pre>
+    <nav class="navbar">
         <div class="logo">
-            <h1>SPORT<span>sport</span></h1>
+            <i><img src="./logo/olimp.jpeg" width="64px" alt=""></i> ОЖСШМ
         </div>
-        <div class="lang-switch">
-            <button id="langBtn" onclick="toggleLang()">KZ / EN</button>
+        <div class="nav-right">
+            <div class="nav-contact">
+                <i class="fa-solid fa-phone"><a href="tel:+7 775 595 5556"></a>+7 775 595 5556</i>
+            </div>
+            <div class="lang-switch">
+                <button onclick="changeLang('kk')">KZ</button>
+                <button onclick="changeLang('ru')">RU</button>
+                <button onclick="changeLang('en')">EN</button>
+            </div>
+            <a href="dashboard.html" class="login-btn">
+                <i class="fa-solid fa-user"></i> <span data-i18n="login">Кіру</span>
+            </a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <video autoplay muted loop id="bg-video">
+            <source src="../000/MEDIA/sportVid.MOV" type="video/MOV">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 data-i18n="hero_title">БОЛАШАҚ ОЛИМПИАДА ЧЕМПИОНДАР ОРТАЛЫҒЫ</h1>
+            <p data-i18n="hero_subtitle">Бізбен бірге биік белестерді бағындыр! Нағыз жеңімпаздар мекені.</p>
         </div>
     </header>
 
-    <main class="login-container">
-        <div class="login-box">
-            <h2 id="formTitle">ЖҮЙЕГЕ КІРУ</h2>
-            <form action="/api/auth/login" method="POST" id="loginForm">
-                <div class="input-group">
-                    <input type="text" name="username" id="username" placeholder="Логин" required>
+    <section class="section stats-section">
+        <h2 class="section-title" data-i18n="achievements">Біздің жетістіктер</h2>
+        <div class="achieve-grid">
+            <div class="achieve-card">
+                <a href="./Achievements/medals.html">
+                    <i class="fa-solid fa-trophy"></i>
+                    <h3>150+</h3>
+                    <p data-i18n="gold_medals">Біздің үздіктер</p>
+                </a>
+            </div>
+            <div class="achieve-card">
+                <a href=".//Achievements/athletes.html">
+                    <i class="fa-solid fa-users"></i>
+                    <h3>500+</h3>
+                    <p data-i18n="athletes_count">Спортшылар</p>
+                </a>
                 </div>
-                <div class="input-group">
-                    <input type="password" name="password" id="password" placeholder="Құпия сөз" required>
-                </div>
-                <button type="submit" class="login-btn">КІРУ</button>
-            </form>
-            <div class="links">
-                <a href="#" id="registerLink">Тіркелу</a>
+            <div class="achieve-card">
+                <a href="./Achievements/international.html">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    <h3>15</h3>
+                    <p data-i18n="int_wins">Халықаралық жеңістер</p>
+                </a>
             </div>
         </div>
-    </main>
+    </section>
 
-    <script src="js/script.js">
+    <section class="section slider-section">
+        <h2 class="section-title" data-i18n="pride">Біздің мақтаныштарымыз</h2>
+        
+        <div class="toggle-container">
+            <button class="toggle-btn active" onclick="showSlider('coaches')" data-i18n="coaches_btn">Жаттықтырушылар</button>
+            <button class="toggle-btn" onclick="showSlider('athletes')" data-i18n="athletes_btn">Спортшылар</button>
+        </div>
 
-    </script>
+        <div id="coaches-slider" class="slider-container active-slider">
+            <button class="slide-arrow left" onclick="scrollSlider('coaches-track', -300)">&#10094;</button>
+            <div class="slider-track" id="coaches-track">
+              <% coaches.forEach(coach => { %>
+                <div class="slide-card">
+                  <div class="slide-img">
+                    <img src="<%= coach.photos[0]%>" alt="">
+                  </div>
+                  <div class="slide-info">
+                    <h4><%= coach.firstName %> <%= coach.lastName %></h4>
+                    <p><%= coach.discipline %></p>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+            <button class="slide-arrow right" onclick="scrollSlider('coaches-track', 300)">&#10095;</button>
+        </div>
+
+        <div id="athletes-slider" class="slider-container hidden-slider">
+            <button class="slide-arrow left" onclick="scrollSlider('athletes-track', -300)">&#10094;</button>
+            <div class="slider-track" id="athletes-track"></div>
+            <button class="slide-arrow right" onclick="scrollSlider('athletes-track', 300)">&#10095;</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>ОЖСШМ</h3>
+                <p><i class="fa-solid fa-location-dot"></i>Талдықорған қ., Болашақ ш\а 4б</p>
+                <p><i class="fa-solid fa-phone"></i>+7 775 595 5556</p>
+                <div class="socials">
+                    <a href="https://www.instagram.com/shvsm_olympic_zhetisu"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/jetisu_obl.sport?igsh=ZDI5M3c0Z2VkYXll"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-map">
+                <iframe src="https://yandex.com/map-widget/v1/?13=44.997604, 78.347325=15" width="100%" height="250" frameborder="0"></iframe>
+            </div>                                                
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
 </body>
 </html>

@@ -9,7 +9,6 @@ import coachRoutes from './routes/coach.routes';
 import eventRoutes from './routes/event.routes';
 import { prisma } from './db/prisma';
 import { Role } from './generated/prisma/client';
-import { decrypt } from "./services/auth.service";
 import { openApiSpec } from "./docs/swagger";
 
 const app = express();
@@ -31,55 +30,39 @@ app.use("/api/coach", coachRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/event", eventRoutes);
 
-app.get('/', (_req, res) => {
-  res.render('pages/index');
+app.get('/', async (_req, res) => {
+  const coaches = await prisma.user.findMany({
+    where: { role: Role.coach},
+    select: {
+      firstName: true,
+      lastName: true,
+      middleName: true,
+      discipline: true, 
+      photos: {
+        select: {
+          url: true,
+        },
+        take: 1,
+      },
+    },
+  });
+  let students = await prisma.student.findFirst({
+    take: 10,
+    orderBy: {id: 'asc'},
+  });
+  res.render('index', {
+    coaches,
+    students
+  });
 })
 
 app.get('/dashboard', (_req, res) => {
-  res.render('pages/dashboard');
+  res.render('dashboard');
 })
 
-app.get('/coaches', async (_req, res) => {
-  try {
-    const coachListRaw = await prisma.user.findMany({
-      where: { role: Role.coach },
-      include: {
-        photos: true,
-        students: {
-          include: {
-            photos: true,
-          }
-        },
-        events: true,
-      },
-    });
+// app.get('/coaches', async (_req, res) => {
+// });
 
-
-    const dataList = coachListRaw.map((c, idx) => ({
-      idx,
-      coach: {
-        firstName: c.firstName,
-        lastName: c.lastName,
-        phoneNumber: decrypt(c.phoneNumber),
-        username: c.username,
-        id: c.id,
-        role: c.role,
-        avatarId: c.photos[0]?.id,
-        avatar: c.photos[0]?.url,
-      },
-      students: c.students,
-      events: c.events, 
-    }));
-
-    res.render('pages/coaches', {
-      dataList,
-    });
-
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
-
-//TODO: add export to exel, coach_dashboard, add recreating/autodelete outdated tokens
+//TODO: add export to pdf, add recreating/autodelete outdated tokens
 
 export default app;
