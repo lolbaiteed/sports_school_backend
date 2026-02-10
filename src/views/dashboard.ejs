@@ -10,27 +10,24 @@
 </head>
 <body class="dashboard-body">
 
-    <div id="login-section" class="login-container">
-        <form class="login-box" action=/api/auth/login method="POST">
-            <h2>Жүйеге кіру</h2>
-            <input type="text" id="username" name="username" placeholder="Логин">
-            <input type="password" id="password" name="password" placeholder="Құпия сөз">
-            <button type="submit" class="cta-btn">Кіру</button>
-            <p id="login-error" style="color:red; display:none;">Қате!</p>
-            <a href="/" class="back-link">← Сайтқа қайту</a>
-        </div>
-    </div>
+    <pre><% JSON.stringify(disciplines,null,2)%></pre>
 
-    <div id="admin-panel" class="panel-container hidden">
+    <div id="admin-panel" class="panel-container">
         <header class="panel-header">
-            <h2>Админ Панелі</h2>
-            <button onclick="logout()" class="logout-btn">Шығу</button>
+          <h2><%= tAdmin("adminPanel") %></h2>
+          <button onclick="logout()" class="logout-btn"><%= tAdmin("logout")%></button>
         </header>
 
         <div id="sports-view">
-            <h3>Спорт түрін таңдаңыз:</h3>
+          <h3><%= tAdmin("PickSport")%>:</h3>
             <div class="sports-grid" id="sports-grid-admin">
+              <% disciplines.forEach(discipline => {%>
+                <div class="sport-item" onclick="showCoaches('${s.name}')">
+                    <i class="fa-solid ${s.icon}"></i>
+                    <h4><%= tDiscipline(discipline) %></h4>
                 </div>
+              <%})%>
+            </div>
         </div>
 
         <div id="coaches-view" class="hidden">

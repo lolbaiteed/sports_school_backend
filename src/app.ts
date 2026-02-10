@@ -8,8 +8,11 @@ import studentRoutes from './routes/student.routes';
 import coachRoutes from './routes/coach.routes';
 import eventRoutes from './routes/event.routes';
 import { prisma } from './db/prisma';
-import { Role } from './generated/prisma/client';
+import { Role, Discipline } from './generated/prisma/client';
 import { openApiSpec } from "./docs/swagger";
+import { authorize } from "./middleware/authorize";
+import { authenticate } from "./middleware/auth";
+import { detectLanguage, LangRequest, switchLang } from "./middleware/lang";
 
 const app = express();
 app.use(express.json());
@@ -29,15 +32,17 @@ app.use("/api/files", fileRoutes);
 app.use("/api/coach", coachRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/event", eventRoutes);
+app.use(detectLanguage);
+app.use(switchLang);
 
 app.get('/', async (_req, res) => {
   const coaches = await prisma.user.findMany({
-    where: { role: Role.coach},
+    where: { role: Role.coach },
     select: {
       firstName: true,
       lastName: true,
       middleName: true,
-      discipline: true, 
+      discipline: true,
       photos: {
         select: {
           url: true,
@@ -46,18 +51,31 @@ app.get('/', async (_req, res) => {
       },
     },
   });
-  let students = await prisma.student.findFirst({
-    take: 10,
-    orderBy: {id: 'asc'},
-  });
+  // let students = await prisma.student.findFirst({
+  //   take: 10,
+  //   orderBy: {id: 'asc'},
+  // });
   res.render('index', {
     coaches,
-    students
+    // students
   });
 })
 
-app.get('/dashboard', (_req, res) => {
-  res.render('dashboard');
+app.get('/login', (_req, res) => {
+  res.render('login');
+})
+
+
+app.get('/dashboard', authenticate, authorize(Role.admin, Role.coach), (req, res) => {
+  const disciplines = Object.values(Discipline);
+  const lang = (req as LangRequest).lang;
+
+  res.render('dashboard', {
+    disciplines,
+    // tDiscipline: (key) => disciplineTranslations[lang as "ru" | "kk"]?.[key] || key,
+    // tAdmin,
+    lang
+  });
 })
 
 // app.get('/coaches', async (_req, res) => {

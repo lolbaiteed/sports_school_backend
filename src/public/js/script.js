@@ -5,48 +5,48 @@ const translations = {
     en: { login: "Login", hero_title: "FUTURE OLYMPIC CHAMPIONS CENTER", hero_subtitle: "Conquer heights with us!", pride: "Our Pride", coaches_btn: "Coaches", athletes_btn: "Athletes" }
 };
 
-const sports = [
-    { name: "Ауыр атлетика", icon: "" }, { name: "Жеңіл атлетика", icon: "" },
-    { name: "Бокс", icon: "" }, { name: "Керлинг", icon: "" },
-    { name: "Велоспорт", icon: "" }, { name: "Садақ ату", icon: "" },
-    { name: "Грек-рим күресі", icon: "" }, { name: "Спорттық шыңға өрмелеу", icon: "" },
-    { name: "Дзюдо", icon: "" }, { name: "Таеквондо", icon: "" },
-    { name: "Еркін күрес", icon: "" }
-];
+// const sports = [
+//     { name: "Ауыр атлетика", icon: "" }, { name: "Жеңіл атлетика", icon: "" },
+//     { name: "Бокс", icon: "" }, { name: "Керлинг", icon: "" },
+//     { name: "Велоспорт", icon: "" }, { name: "Садақ ату", icon: "" },
+//     { name: "Грек-рим күресі", icon: "" }, { name: "Спорттық шыңға өрмелеу", icon: "" },
+//     { name: "Дзюдо", icon: "" }, { name: "Таеквондо", icon: "" },
+//     { name: "Еркін күрес", icon: "" }
+// ];
 
 // ПАЙДАЛАНУШЫЛАР
 // Маңызды өзгеріс: Coach1-ге дайын "event" (жарыс) қосып қойдым, батырма көрінуі үшін.
-const users = [
-    { id: 1, role: 'admin', user: 'admin', pass: 'admin', name: 'Бас Админ' },
-    { 
-        id: 101, role: 'coach', user: 'coach1', pass: '123', name: 'Асқар Омаров', sport: 'Бокс', 
-        event: { type: 'Жарыс', name: 'ҚР Чемпионаты', loc: 'https://go.2gis.com/example', date: '20.05.2024' } 
-    },
-    { id: 102, role: 'coach', user: 'coach2', pass: '123', name: 'Серік Сапиев', sport: 'Бокс', event: null },
-    { id: 103, role: 'coach', user: 'coach3', pass: '123', name: 'Елена Иванова', sport: 'Гимнастика', event: null }
-];
+// const users = [
+//     { id: 1, role: 'admin', user: 'admin', pass: 'admin', name: 'Бас Админ' },
+//     { 
+//         id: 101, role: 'coach', user: 'coach1', pass: '123', name: 'Асқар Омаров', sport: 'Бокс', 
+//         event: { type: 'Жарыс', name: 'ҚР Чемпионаты', loc: 'https://go.2gis.com/example', date: '20.05.2024' } 
+//     },
+//     { id: 102, role: 'coach', user: 'coach2', pass: '123', name: 'Серік Сапиев', sport: 'Бокс', event: null },
+//     { id: 103, role: 'coach', user: 'coach3', pass: '123', name: 'Елена Иванова', sport: 'Гимнастика', event: null }
+// ];
 
-let athletes = [
-    { id: 1, name: "Алихан Смаилов", dob: "2005-05-10", coachId: 101, img: "https://randomuser.me/api/portraits/men/1.jpg" },
-    { id: 2, name: "Бекзат Нұрғали", dob: "2006-02-15", coachId: 101, img: "https://randomuser.me/api/portraits/men/2.jpg" }
-];
+// let athletes = [
+//     { id: 1, name: "Алихан Смаилов", dob: "2005-05-10", coachId: 101, img: "https://randomuser.me/api/portraits/men/1.jpg" },
+//     { id: 2, name: "Бекзат Нұрғали", dob: "2006-02-15", coachId: 101, img: "https://randomuser.me/api/portraits/men/2.jpg" }
+// ];
 
 /* --- 1. СЛАЙДЕРДІ ІСКЕ ҚОСУ (МАҚТАНЫШТАР) --- */
 // Бұл код міндетті түрде жұмыс істеуі керек
 document.addEventListener("DOMContentLoaded", function() {
     initSliders();
     
-    // Егер Dashboard-та болсақ, алдыңғы логинді тексереміз (қалау бойынша)
-    const savedLang = localStorage.getItem('lang') || 'kk';
-    changeLang(savedLang);
+    // // Егер Dashboard-та болсақ, алдыңғы логинді тексереміз (қалау бойынша)
+    // const savedLang = localStorage.getItem('lang') || 'kk';
+    // changeLang(savedLang);
 });
 
-function initSliders() {
-    const cTrack = document.getElementById('coaches-track');
-    const aTrack = document.getElementById('athletes-track');
-
-    // Егер бұл элементтер табылмаса (мысалы dashboard.html-де), функция тоқтайды
-    if (!cTrack || !aTrack) return;
+// function initSliders() {
+//     const cTrack = document.getElementById('coaches-track');
+//     const aTrack = document.getElementById('athletes-track');
+//
+//     // Егер бұл элементтер табылмаса (мысалы dashboard.html-де), функция тоқтайды
+//     if (!cTrack || !aTrack) return;
 
     // Слайдерді тазалау
     // cTrack.innerHTML = "";
@@ -190,7 +190,7 @@ function initSliders() {
     //             </div>
     //         </div>`;
     // }
-}
+// }
 
 function showSlider(type) {
     // Барлық батырмалардан active алу
@@ -251,17 +251,17 @@ function handleLogin() {
 
 /* --- 3. АДМИН ЛОГИКАСЫ --- */
 
-function renderSportsAdmin() {
-    const grid = document.getElementById('sports-grid-admin');
-    grid.innerHTML = '';
-    sports.forEach(s => {
-        grid.innerHTML += `
-            <div class="sport-item" onclick="showCoaches('${s.name}')">
-                <i class="fa-solid ${s.icon}"></i>
-                <h4>${s.name}</h4>
-            </div>`;
-    });
-}
+// function renderSportsAdmin() {
+//     const grid = document.getElementById('sports-grid-admin');
+//     grid.innerHTML = '';
+//     sports.forEach(s => {
+//         grid.innerHTML += `
+//             <div class="sport-item" onclick="showCoaches('${s.name}')">
+//                 <i class="fa-solid ${s.icon}"></i>
+//                 <h4>${s.name}</h4>
+//             </div>`;
+//     });
+// }
 
 function showCoaches(sportName) {
     document.getElementById('sports-view').classList.add('hidden');
