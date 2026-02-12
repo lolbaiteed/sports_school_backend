@@ -7,12 +7,12 @@ import fileRoutes from './routes/file.routes';
 import studentRoutes from './routes/student.routes';
 import coachRoutes from './routes/coach.routes';
 import eventRoutes from './routes/event.routes';
-import { prisma } from './db/prisma';
 import { Role, Discipline } from './generated/prisma/client';
 import { openApiSpec } from "./docs/swagger";
 import { authorize } from "./middleware/authorize";
 import { authenticate } from "./middleware/auth";
 import { detectLanguage, LangRequest, switchLang } from "./middleware/lang";
+import { getCoaches } from "./utils/getData";
 
 const app = express();
 app.use(express.json());
@@ -36,25 +36,11 @@ app.use(detectLanguage);
 app.use(switchLang);
 
 app.get('/', async (_req, res) => {
-  const coaches = await prisma.user.findMany({
-    where: { role: Role.coach },
-    select: {
-      firstName: true,
-      lastName: true,
-      middleName: true,
-      discipline: true,
-      photos: {
-        select: {
-          url: true,
-        },
-        take: 1,
-      },
-    },
-  });
   // let students = await prisma.student.findFirst({
   //   take: 10,
   //   orderBy: {id: 'asc'},
   // });
+  const coaches = await getCoaches();
   res.render('index', {
     coaches,
     // students
@@ -65,15 +51,14 @@ app.get('/login', (_req, res) => {
   res.render('login');
 })
 
-
-app.get('/dashboard', authenticate, authorize(Role.admin, Role.coach), (req, res) => {
+app.get('/dashboard', authenticate, authorize(Role.admin, Role.coach), async (req, res) => {
   const disciplines = Object.values(Discipline);
   const lang = (req as LangRequest).lang;
+  const coaches = await getCoaches();
 
   res.render('dashboard', {
     disciplines,
-    // tDiscipline: (key) => disciplineTranslations[lang as "ru" | "kk"]?.[key] || key,
-    // tAdmin,
+    coaches,
     lang
   });
 })

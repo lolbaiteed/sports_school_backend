@@ -263,20 +263,20 @@ function handleLogin() {
 //     });
 // }
 
-function showCoaches(sportName) {
+function showCoaches(sportName, discipline) {
     document.getElementById('sports-view').classList.add('hidden');
     document.getElementById('coaches-view').classList.remove('hidden');
     document.getElementById('selected-sport-title').innerText = `${sportName} бапкерлері:`;
     
     const list = document.getElementById('coaches-list-admin');
     list.innerHTML = '';
-    const coaches = users.filter(u => u.role === 'coach' && u.sport === sportName);
+    const coaches = window.appData.filter(coach => coach.discipline === discipline); 
 
     if (coaches.length > 0) {
         coaches.forEach(c => {
             list.innerHTML += `
                 <div class="item" onclick="manageCoach(${c.id})" style="cursor:pointer; padding:15px; border-bottom:1px solid #ddd;">
-                    <strong>${c.name}</strong> <span style="float:right; color:blue;">Басқару ></span>
+                    <strong>${c.firstName}</strong> <span style="float:right; color:blue;">Басқару ></span>
                 </div>`;
         });
     } else {
@@ -292,10 +292,10 @@ function goBackToSports() {
 let currentCoachId = null;
 function manageCoach(cId) {
     currentCoachId = cId;
-    const coach = users.find(u => u.id === cId);
+    const coach = window.appData.filter(c => c.id === cId);
     document.getElementById('coaches-view').classList.add('hidden');
     document.getElementById('manager-view').classList.remove('hidden');
-    document.getElementById('manager-coach-name').innerText = coach.name;
+    document.getElementById('manager-coach-name').innerText = `${coach[0].firstName} ${coach[0].lastName}`;
     renderCoachAthletesTable();
 }
 

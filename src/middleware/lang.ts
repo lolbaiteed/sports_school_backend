@@ -15,7 +15,7 @@ export function detectLanguage(req: LangRequest, res: Response, next: NextFuncti
   }
 
   const header = req.headers["accept-language"];
-  let lang = "ru";
+  let lang = "kk";
 
   if (header) {
     const preferred = header
@@ -37,7 +37,7 @@ export function detectLanguage(req: LangRequest, res: Response, next: NextFuncti
 }
 
 export function switchLang(req: LangRequest, res: Response, next: NextFunction) {
-  const lang = req.lang || "ru"; // from your detectLanguage middleware
+  const lang = req.lang || "kk"; // from your detectLanguage middleware
 
   // tDiscipline: enum translations
   res.locals.tDiscipline = (key: string) =>

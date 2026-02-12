@@ -10,8 +10,6 @@
 </head>
 <body class="dashboard-body">
 
-    <pre><% JSON.stringify(disciplines,null,2)%></pre>
-
     <div id="admin-panel" class="panel-container">
         <header class="panel-header">
           <h2><%= tAdmin("adminPanel") %></h2>
@@ -22,7 +20,7 @@
           <h3><%= tAdmin("PickSport")%>:</h3>
             <div class="sports-grid" id="sports-grid-admin">
               <% disciplines.forEach(discipline => {%>
-                <div class="sport-item" onclick="showCoaches('${s.name}')">
+              <div class="sport-item" onclick="showCoaches('<%= tDiscipline(discipline) %>', '<%= discipline %>')">
                     <i class="fa-solid ${s.icon}"></i>
                     <h4><%= tDiscipline(discipline) %></h4>
                 </div>
@@ -96,6 +94,7 @@
         
     </div>
 
+    <script> window.appData = <%- JSON.stringify(coaches)%> </script>
     <script src="js/script.js"></script>
 </body>
 </html>
