@@ -1,3 +1,5 @@
+import { setuid } from "node:process";
+
 export const disciplineTranslations = {
   ru: {
     Weightlifting: "Тяжёлая атлетика",
@@ -23,11 +25,53 @@ export const adminTranslations = {
   ru: {
     adminPanel: "Панель администратора",
     PickSport: "Выберите вид спорта",
-    logout: "Выход"
+    logout: "Выход",
+    chs: "тренеры",
+    chsEmpty: "Тренеров нет",
+    backToSports: "← Назад к дисциплинам",
+    control: "Управление",
+    EventSelector: "Назначение соревнований/сборов",
+    EventType1: "Учебно-тренировочный сбор",
+    EventType2: "Соревнование",
+    EventName: "Название события",
+    EventPlace: "Место проведения (ссылка на Yandex карты)",
+    EventDate: "Время (ПК.АА-КК.АА)",
+    EventRules: "Правило (PDF):",
+    Protocol: "Протокол (PDF):",
+    AddEvent: "Добавить событие",
+    AddStudent: "Добавить спортсмена",
+    Add: "Добавить",
+    StudentList: "Список зарегистрированных спортсменов",
+    GoBack: "← Назад",
+    studentFirstName: "Имя",
+    studentLastName: "Фамилия",
+    studentMiddleName: "Отчество",
+    studentPhoneNumber: "Номер телефона"
   },
   kk: {
     adminPanel: "Админ Панелі",
     PickSport: "Спорт түрін таңдаңыз",
-    logout: "Шығу"
+    logout: "Шығу",
+    chs: "бапкерлері",
+    chsEmpty: "Бапкер жоқ",
+    backToSports: "← Спорт түрлеріне қайту",
+    control: "Басқару",
+    EventSelector: "Жарыс/Жиын тағайындау",
+    EventType1: "Оқу-жаттығу жиыны",
+    EventType2: "Жарыс",
+    EventName: "Атауы",
+    EventPlace: "Өтетін жері (Yandex сілтемесі)",
+    EventDate: "Уақыты (КК.АА - КК.АА)",
+    EventRules: "Ереже (PDF):",
+    Protocol: "Хаттама (PDF):",
+    AddEvent: "Тағайындау",
+    AddStudent: "Спортшы қосу",
+    Add: "Қосу",
+    StudentList: "Тіркелген спортшылар тізімі",
+    GoBack: "← Артқа",
+    studentFirstName: "Аты",
+    studentLastName: "Тегі",
+    studentMiddleName: "Әкесінің аты",
+    studentPhoneNumber: "Телефон нөмірі"
   },
 }

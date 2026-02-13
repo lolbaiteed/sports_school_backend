@@ -74,7 +74,7 @@ router.delete('/:id', authenticate, authorize(Role.admin, Role.coach), deleteStu
  *           schema:
  *            type: object
  *            required:
- *              - file
+ *              - avatar
  *              - firstName
  *              - lastName
  *              - dateOfBirth
@@ -82,7 +82,7 @@ router.delete('/:id', authenticate, authorize(Role.admin, Role.coach), deleteStu
  *              - coachId
  *              - discipline
  *            properties:
- *              file:
+ *              avatar:
  *                type: string
  *                format: binary
  *                description: Image to upload

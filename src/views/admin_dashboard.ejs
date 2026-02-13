@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Басқару Панелі</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+
+  <div id="admin-panel" class="panel-container">
+    <header class="panel-header">
+      <h2>
+        <%= tAdmin("adminPanel") %>
+      </h2>
+      <button onclick="logout()" class="logout-btn">
+        <%= tAdmin("logout")%>
+      </button>
+    </header>
+
+    <div id="sports-view">
+      <h3>
+        <%= tAdmin("PickSport")%>:
+      </h3>
+      <div class="sports-grid" id="sports-grid-admin">
+        <% disciplines.forEach(discipline=> {%>
+          <div class="sport-item" onclick="showCoaches('<%= tDiscipline(discipline) %>', '<%= discipline %>')">
+            <i class="fa-solid ${s.icon}"></i>
+            <h4>
+              <%= tDiscipline(discipline) %>
+            </h4>
+          </div>
+          <%})%>
+      </div>
+    </div>
+
+    <div id="coaches-view" class="hidden">
+      <button onclick="goBackToSports()" class="back-btn">
+        <%= tAdmin("backToSports")%>
+      </button>
+      <h3 id="selected-sport-title">Бокс жаттықтырушылары:</h3>
+      <div class="list-group" id="coaches-list-admin">
+      </div>
+    </div>
+
+    <div id="manager-view" class="hidden">
+      <button onclick="goBackToCoaches()" class="back-btn">
+        <%= tAdmin('GoBack')%>
+      </button>
+      <h3 id="manager-coach-name" style="color: var(--primary); margin: 15px 0;">Бапкер аты</h3>
+
+      <div class="admin-actions-grid">
+        <div class="admin-card">
+          <h4>📅 <%= tAdmin('EventSelector')%>
+          </h4>
+          <form action="/api/Event/add" method="post" class="form-group">
+            <select id="event-type">
+              <option>
+                <%= tAdmin('EventType1')%>
+              </option>
+              <option>
+                <%= tAdmin('EventType2')%>
+              </option>
+            </select>
+            <input type="text" id="event-name" placeholder="<%= tAdmin('EventName')%>">
+            <input type="text" id="event-loc" placeholder="<%= tAdmin('EventPlace')%>">
+            <input type="text" id="event-dates" placeholder="<%= tAdmin('EventDate')%>">
+            <label>
+              <%= tAdmin('EventRules')%><input type="file" id="event-pdf">
+            </label>
+            <label>
+              <%= tAdmin('Protocol')%><input type="file" id="event-pdf">
+            </label>
+            <button type="submit" class="cta-btn">
+              <%= tAdmin('AddEvent')%>
+            </button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h4>➕ <%= tAdmin('AddStudent')%>
+          </h4>
+          <form action="/api/student/add" method="post" enctype="multipart/form-data" class="form-group">
+            <input type="text" name="firstName" required placeholder="<%= tAdmin('studentFirstName') %>">
+            <input type="text" name="lastName" required placeholder="<%= tAdmin('studentLastName')%>">
+            <input type="text" name="middleName" required placeholder="<%= tAdmin('studentMiddleName')%>">
+            <input type="text" id="CoachId" name="coachId" hidden>
+            <input type="text" id="Discipline" name="discipline" hidden>
+            <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required name="phoneNumber"
+              placeholder="<%= tAdmin('studentPhoneNumber')%>">
+            <input type="date" name="dateOfBirth" required id="new-ath-dob">
+            <input type="file" name="avatar" required id="new-ath-photo" accept="image/*">
+            <button type="submit" class="cta-btn" style="background:green; color:white;">
+              <%= tAdmin('Add')%>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="admin-card full-width" style="margin-top:20px;">
+        <h4>
+          <%= tAdmin('StudentList')%>
+        </h4>
+        <div id="coach-athletes-table" class="attendance-list"></div>
+        <button onclick="exportExcel()" class="excel-btn"><i class="fa-solid fa-file-excel"></i> Excel жүктеу</button>
+        <!-- ----------- Экспорт эксель -->
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    window.coachesData = <% - JSON.stringify(coaches) %>;
+    const langDataArr = [
+      '<%= tAdmin('chsEmpty') %>',
+      '<%= tAdmin('chs')%>',
+      '<%= tAdmin('control')%>',
+    ];
+
+    window.langData = langDataArr; 
+  </script>
+  <script src="js/script.js"></script>
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+
 /* --- ДЕРЕКТЕР БАЗАСЫ (MOCK DATA) --- */
 const translations = {
     kk: { login: "Кіру", hero_title: "БОЛАШАҚ ОЛИМПИАДА ЧЕМПИОНДАР ОРТАЛЫҒЫ", hero_subtitle: "Бізбен бірге биік белестерді бағындыр!", pride: "Біздің мақтаныштарымыз", coaches_btn: "Жаттықтырушылар", athletes_btn: "Спортшылар" },
@@ -264,23 +265,24 @@ function handleLogin() {
 // }
 
 function showCoaches(sportName, discipline) {
+    const tAdm = window.langData;
     document.getElementById('sports-view').classList.add('hidden');
     document.getElementById('coaches-view').classList.remove('hidden');
-    document.getElementById('selected-sport-title').innerText = `${sportName} бапкерлері:`;
+    document.getElementById('selected-sport-title').innerText = `${sportName} ${tAdm[1]}:`;
     
     const list = document.getElementById('coaches-list-admin');
     list.innerHTML = '';
-    const coaches = window.appData.filter(coach => coach.discipline === discipline); 
+    const coaches = window.coachesData.filter(coach => coach.discipline === discipline); 
 
     if (coaches.length > 0) {
         coaches.forEach(c => {
             list.innerHTML += `
                 <div class="item" onclick="manageCoach(${c.id})" style="cursor:pointer; padding:15px; border-bottom:1px solid #ddd;">
-                    <strong>${c.firstName}</strong> <span style="float:right; color:blue;">Басқару ></span>
+                    <strong>${c.firstName} ${c.lastName}</strong> <span style="float:right; color:blue;">${tAdm[2]} ></span>
                 </div>`;
         });
     } else {
-        list.innerHTML = '<p>Бапкер жоқ.</p>';
+        list.innerHTML = `<p>${tAdm[0]}</p>`;
     }
 }
 
@@ -292,10 +294,14 @@ function goBackToSports() {
 let currentCoachId = null;
 function manageCoach(cId) {
     currentCoachId = cId;
-    const coach = window.appData.filter(c => c.id === cId);
+    const coach = window.coachesData.filter(c => c.id === cId);
     document.getElementById('coaches-view').classList.add('hidden');
     document.getElementById('manager-view').classList.remove('hidden');
     document.getElementById('manager-coach-name').innerText = `${coach[0].firstName} ${coach[0].lastName}`;
+    const coachIdInput = document.getElementById('CoachId');
+    const DisciplineInput = document.getElementById('Discipline');
+    DisciplineInput.value = coach[0].discipline;
+    coachIdInput.value = coach[0].id;
     renderCoachAthletesTable();
 }
 

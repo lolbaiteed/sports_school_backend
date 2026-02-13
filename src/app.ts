@@ -56,11 +56,16 @@ app.get('/dashboard', authenticate, authorize(Role.admin, Role.coach), async (re
   const lang = (req as LangRequest).lang;
   const coaches = await getCoaches();
 
-  res.render('dashboard', {
-    disciplines,
-    coaches,
-    lang
-  });
+  if (req.query.role === 'coach') {
+    res.render('coach_dashboard', {
+    });
+  } else if (req.query.role === 'admin') {
+    res.render('admin_dashboard', {
+      disciplines,
+      coaches,
+      lang
+    });
+  }
 })
 
 // app.get('/coaches', async (_req, res) => {

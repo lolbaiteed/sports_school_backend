@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { ApiError } from '../utils/ApiError';
 import { checkInput } from '../utils/checkReq';
 import { prisma } from '../db/prisma';
+import { getCoordsFromYandexUrl } from '../utils/coords';
 
 export const addEvent = async (req: Request, res: Response) => {
   try {
@@ -11,8 +12,7 @@ export const addEvent = async (req: Request, res: Response) => {
 
     interface AddEventBody {
       eventName: string,
-      latitude: number,
-      longitude: number,
+      coordsUrl: string,
       startDate: string,
       endDate: string,
       image?: {
@@ -25,12 +25,16 @@ export const addEvent = async (req: Request, res: Response) => {
 
     const {
       eventName,
-      latitude,
-      longitude,
       startDate,
+      coordsUrl,
       endDate,
       image,
     } = req.body as AddEventBody;
+
+    const coords = getCoordsFromYandexUrl(coordsUrl);
+    
+    const latitude = coords.latitude;
+    const longitude = coords.longitude;
 
     const requiredFields = { eventName, latitude, longitude, startDate, endDate};
 

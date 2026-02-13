@@ -114,7 +114,23 @@ export const login = async (req: Request, res: Response) => {
     if (!isExists) {
       return;
     } else {
-      res.redirect('/dashboard');
+      const user = await prisma.user.findFirst({
+        where: { id: isExists.userId}
+      });
+
+      if (user?.role === Role.admin) {
+        const params = new URLSearchParams({
+          role: "admin",
+        });
+        res.redirect(`/dashboard?${params.toString()}`);
+      } else if (user?.role === Role.coach) {
+        const params = new URLSearchParams({
+          role: "coach",
+        });
+        res.redirect(`/dashboard?${params.toString()}`);
+      } else {
+        res.redirect('/');
+      }
     }
   } else {
     if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");

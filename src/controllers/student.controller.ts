@@ -13,6 +13,7 @@ export const registerStudent = async (req: Request, res: Response) => {
     const {
       firstName,
       lastName,
+      middleName,
       dateOfBirth,
       phoneNumber,
       coachId,
@@ -24,13 +25,14 @@ export const registerStudent = async (req: Request, res: Response) => {
     interface registerStudentBody {
       firstName: string,
       lastName: string,
+      middleName: string,
       dateOfBirth: string,
       phoneNumber: string,
       coachId: number,
       discipline: Discipline
     }
 
-    const requiredFileds = { firstName, lastName, dateOfBirth, phoneNumber, coachId, discipline: disciplineReq } as registerStudentBody;
+    const requiredFileds = { firstName, lastName, middleName, dateOfBirth, phoneNumber, coachId, discipline: disciplineReq } as registerStudentBody;
     checkInput(requiredFileds);
 
     const phoneEnc = encrypt(phoneNumber);
@@ -46,7 +48,7 @@ export const registerStudent = async (req: Request, res: Response) => {
     const dateConverted = new Date(dateOfBirth);
 
     const coach = await prisma.user.findUnique({
-      where: { id: coachId },
+      where: { id: Number(coachId) },
     });
 
     if (!coach) throw new ApiError(404, "NOT_FOUND", `Coach with ID: ${coachId} not exists`);
@@ -55,6 +57,7 @@ export const registerStudent = async (req: Request, res: Response) => {
       data: {
         firstName: firstName,
         lastName: lastName,
+        middleName: middleName,
         dateOfBirth: dateConverted,
         phoneNumber: phoneEnc,
         discipline: disciplineReq,
