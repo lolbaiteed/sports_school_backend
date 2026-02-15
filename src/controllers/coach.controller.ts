@@ -1,10 +1,10 @@
 import { Response, Request } from "express";
-import { prisma } from '../db/prisma';
-import { ApiError } from "../utils/ApiError";
-import { Role, Discipline } from '../generated/prisma/client';
-import { hashData, encrypt } from "../services/auth.service";
-import { checkInput } from "../utils/checkReq";
-import { isValidDiscipline, isValidRole } from "../services/verify.service";
+import { prisma } from '../db/prisma.js';
+import { ApiError } from "../utils/ApiError.js";
+import { Role, Discipline } from '../generated/prisma/client.js';
+import { hashData, encrypt } from "../services/auth.service.js";
+import { checkInput } from "../utils/checkReq.js";
+import { isValidDiscipline, isValidRole } from "../services/verify.service.js";
 
 export const editCoach = async (req: Request, res: Response) => {
   try {
@@ -225,3 +225,4 @@ export const addCoach = async (req: Request, res: Response) => {
     });
   }
 };
+

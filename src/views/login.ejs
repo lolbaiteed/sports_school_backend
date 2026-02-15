@@ -3,16 +3,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Басқару Панелі</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <div id="login-section" class="login-container">
-    <form class="login-box" action=/api/auth/login method="POST">
-        <h2>Жүйеге кіру</h2>
-        <input type="text" id="username" name="username" placeholder="Логин">
-        <input type="password" id="password" name="password" placeholder="Құпия сөз">
-        <button type="submit" class="cta-btn">Кіру</button>
+    <form class="login-box" id=login-form action=/api/auth/login method="POST">
+      <h2><%= login('logInSystem')%></h2>
+        <input type="text" name="username" placeholder="Логин">
+        <input type="password" name="password" placeholder="<%= login('passwd')%>">
+        <button type="submit" class="cta-btn"><%= login('login')%></button>
         <p id="login-error" style="color:red; display:none;">Қате!</p>
-        <a href="/" class="back-link">← Сайтқа қайту</a>
+        <a href="/" class="back-link"><%= login('BackToSite')%></a>
     </div>
 </div>
+
+<script>
+  const form = document.getElementById('login-form');
+  const errorLine = document.getElementById('login-error');
+
+  form.addEventlistener('submit', async function(e) {
+    e.preventDefault();
+
+    try {
+      const resp = await fetch(form.action, {
+        method: form.method,
+        body: new FromData(form)
+      });
+
+      if (!resp.ok) {
+        throw new Error(resp.json);
+      }
+    } catch {
+      errorLine.style.display = block;
+      errorLine.textContent = resp.json.message;
+    }
+  });
+</script>

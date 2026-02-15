@@ -1,7 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import { Request, Response } from 'express';
-import { ApiError } from '../utils/ApiError';
+import { ApiError } from '../utils/ApiError.js';
 
 const storage = multer.diskStorage({
   destination: function(_req, _file, cb) {

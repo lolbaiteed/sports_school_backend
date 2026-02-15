@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { ApiError } from "../utils/ApiError";
-import { checkInput } from "../utils/checkReq";
-import { prisma } from '../db/prisma';
-import { encrypt } from "../services/auth.service";
-import { Discipline } from "../generated/prisma/client";
-import { isValidDiscipline } from "../services/verify.service";
+import { ApiError } from "../utils/ApiError.js";
+import { checkInput } from "../utils/checkReq.js";
+import { prisma } from '../db/prisma.js';
+import { encrypt } from "../services/auth.service.js";
+import { Discipline } from "../generated/prisma/client.js";
+import { isValidDiscipline } from "../services/verify.service.js";
 import { MulterError } from "multer";
 
 export const registerStudent = async (req: Request, res: Response) => {
@@ -78,10 +78,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         },
       },
     });
-    res.status(201).json({
-      code: "CREATED",
-      message: "Student created successfully"
-    });
+    res.redirect('/dashboard?role=admin');
   } catch (error) {
     if (error instanceof MulterError) {
       return res.status(400).json({

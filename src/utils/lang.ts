@@ -1,6 +1,8 @@
-import { setuid } from "node:process";
+interface Translations {
+  [lang: string]: { [key: string]: string };
+}
 
-export const disciplineTranslations = {
+export const disciplineTranslations: Translations = {
   ru: {
     Weightlifting: "Тяжёлая атлетика",
     Boxing: "Бокс",
@@ -21,7 +23,7 @@ export const disciplineTranslations = {
   },
 };
 
-export const adminTranslations = {
+export const adminTranslations: Translations = {
   ru: {
     adminPanel: "Панель администратора",
     PickSport: "Выберите вид спорта",
@@ -40,6 +42,7 @@ export const adminTranslations = {
     Protocol: "Протокол (PDF):",
     AddEvent: "Добавить событие",
     AddStudent: "Добавить спортсмена",
+    addCoach: "Добавить тренера",
     Add: "Добавить",
     StudentList: "Список зарегистрированных спортсменов",
     GoBack: "← Назад",
@@ -66,6 +69,7 @@ export const adminTranslations = {
     Protocol: "Хаттама (PDF):",
     AddEvent: "Тағайындау",
     AddStudent: "Спортшы қосу",
+    addCoach: "Жаттықтырушы қосыңыз",
     Add: "Қосу",
     StudentList: "Тіркелген спортшылар тізімі",
     GoBack: "← Артқа",
@@ -75,3 +79,19 @@ export const adminTranslations = {
     studentPhoneNumber: "Телефон нөмірі"
   },
 }
+
+export const loginTranslations: Translations = {
+  ru: {
+    logInSystem: "Войдите в систему",
+    passwd: "Пароль",
+    login: "Войти",
+    BackToSite: "← Вернуться на сайт"
+  },
+  kk: {
+    logInSystem: "Жүйеге кіру",
+    passwd: "Құпия сөз",
+    login: "Кіру",
+    BackToSite: "← Сайтқа қайту"
+  }
+}
+

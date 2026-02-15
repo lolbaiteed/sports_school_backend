@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
@@ -15,16 +15,16 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  username    String   @unique @db.VarChar(80)
-  password    String   @db.VarChar(255)
-  phoneNumber String?  @unique @db.VarChar(255)
-  firstName   String?  @db.VarChar(50)
-  lastName    String?  @db.VarChar(50)
-  middleName  String?  @db.VarChar(50)
+  id          Int         @id @default(autoincrement())
+  username    String      @unique @db.VarChar(80)
+  password    String      @db.VarChar(255)
+  phoneNumber String?     @unique @db.VarChar(255)
+  firstName   String?     @db.VarChar(50)
+  lastName    String?     @db.VarChar(50)
+  middleName  String?     @db.VarChar(50)
   role        Role
-  discipline  Discipline
-  createdAt   DateTime @default(now())
+  discipline  Discipline?
+  createdAt   DateTime    @default(now())
 
   photos   Photo[]
   tokens   Token[]
@@ -35,17 +35,18 @@ model User {
 }
 
 model Student {
-  id          Int      @id @default(autoincrement())
-  phoneNumber String   @unique @db.VarChar(255)
-  firstName   String   @db.VarChar(50)
-  lastName    String   @db.VarChar(50)
-  middleName  String   @db.VarChar(50)
+  id          Int        @id @default(autoincrement())
+  phoneNumber String     @unique @db.VarChar(255)
+  firstName   String     @db.VarChar(50)
+  lastName    String     @db.VarChar(50)
+  middleName  String     @db.VarChar(50)
   dateOfBirth DateTime
-  createdAt   DateTime @default(now())
+  createdAt   DateTime   @default(now())
   coachId     Int?
-  discipline Discipline
+  discipline  Discipline
 
   photos Photo[]
+  event  Event[]
   coach  User?   @relation(fields: [coachId], references: [id], onDelete: Cascade)
 
   @@map("students")
@@ -54,14 +55,16 @@ model Student {
 model Event {
   id        Int      @id @default(autoincrement())
   eventName String   @db.VarChar(100)
+  eventType String   @db.VarChar(100)
   latitude  Float
   longitude Float
-  startDate DateTime @db.Date
-  endDate   DateTime @db.Date
+  startDate DateTime
+  endDate   DateTime
   createdAt DateTime @default(now())
   coachId   Int?
 
   photos Photo[]
+  students Student[]
 
   coach User? @relation(fields: [coachId], references: [id], onDelete: Cascade)
 

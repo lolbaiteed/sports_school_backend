@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { disciplineTranslations, adminTranslations } from '../utils/lang';
+import { disciplineTranslations, adminTranslations, loginTranslations } from '../utils/lang.js';
 const supportedLangs = ["ru", "kk"];
 
 export interface LangRequest extends Request {
@@ -46,6 +46,10 @@ export function switchLang(req: LangRequest, res: Response, next: NextFunction) 
   // tUI: other UI translations
   res.locals.tAdmin= (key: string) =>
     adminTranslations[lang]?.[key] || key;
+
+  res.locals.login= (key: string) => 
+    loginTranslations[lang]?.[key] || key; 
+    
 
   next();
 }

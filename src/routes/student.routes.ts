@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { authorize } from "../middleware/authorize";
-import { authenticate } from "../middleware/auth";
-import { Role } from '../generated/prisma/client';
-import { deleteStudent, editStudent, registerStudent } from "../controllers/student.controller";
-import { upload } from "../controllers/file.controller";
+import { authorize } from "../middleware/authorize.js";
+import { authenticate } from "../middleware/auth.js";
+import { Role } from '../generated/prisma/client.js';
+import { deleteStudent, editStudent, registerStudent } from "../controllers/student.controller.js";
+import { upload } from "../controllers/file.controller.js";
 
 const router = Router();
 

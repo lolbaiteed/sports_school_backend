@@ -1,4 +1,4 @@
-import { ApiError } from "./ApiError";
+import { ApiError } from "./ApiError.js";
 
 export function checkInput(ObjEntry: object) {
   for (const [key, value] of Object.entries(ObjEntry)) {

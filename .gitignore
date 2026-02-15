@@ -143,3 +143,4 @@ prisma/migrations/
 prisma/generated/
 src/generated/
 uploads/
+dist/

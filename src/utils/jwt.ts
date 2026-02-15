@@ -1,20 +1,21 @@
 import jwt from "jsonwebtoken";
-import { Role } from "../generated/prisma/client";
+import { Role } from "../generated/prisma/client.js";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
 const JWT_EXPIRES_IN = "15m";
 
 export function signAccessToken(userId: number, role: Role) {
+  const secret = process.env.JWT_SECRET!;
   return jwt.sign(
     { sub: userId, role },
-    JWT_SECRET,
+    secret,
     { expiresIn: JWT_EXPIRES_IN }
   );
 }
 
 export function verifyAccessToken(token: string) {
+  const secret = process.env.JWT_SECRET!;
   return jwt.verify(
     token,
-    JWT_SECRET
+   secret 
   );
 }

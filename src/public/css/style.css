@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap");
 /* --- НЕГІЗГІ БАПТАУЛАР (Variables & Reset) --- */
 :root {
     --primary: #003366;   /* Қою көк (Ресми) */
@@ -18,10 +19,10 @@ a{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
     background-color: var(--bg);
     color: var(--dark);
     line-height: 1.6;
@@ -473,6 +474,21 @@ footer {
 /* --- Басқару Формалары (Manage View) --- */
 .back-btn {
     background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.add-btn {
+    background: green;
     color: white;
     border: none;
     padding: 10px 15px;

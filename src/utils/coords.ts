@@ -1,4 +1,4 @@
-import { ApiError } from "./ApiError";
+import { ApiError } from "./ApiError.js";
 
 export function getCoordsFromYandexUrl(url: string): { longitude: number; latitude: number } {
   try {

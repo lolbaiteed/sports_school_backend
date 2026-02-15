@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Басқару Панелі</title>
   <link rel="stylesheet" href="css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
@@ -17,7 +16,7 @@
       <h2>
         <%= tAdmin("adminPanel") %>
       </h2>
-      <button onclick="logout()" class="logout-btn">
+      <button id="logout-btn" class="logout-btn">
         <%= tAdmin("logout")%>
       </button>
     </header>
@@ -39,16 +38,19 @@
     </div>
 
     <div id="coaches-view" class="hidden">
-      <button onclick="goBackToSports()" class="back-btn">
+      <button id="backToSports-btn" class="back-btn">
         <%= tAdmin("backToSports")%>
       </button>
-      <h3 id="selected-sport-title">Бокс жаттықтырушылары:</h3>
+      <button onclick="addCoach()" id="addCoach" class="add-btn">
+        <%= tAdmin("addCoach")%>
+      </button>
+      <h3 id="selected-sport-title"></h3>
       <div class="list-group" id="coaches-list-admin">
       </div>
     </div>
 
     <div id="manager-view" class="hidden">
-      <button onclick="goBackToCoaches()" class="back-btn">
+      <button onclick="goBackToCoaches()" id="backToCoach-btn" class="back-btn">
         <%= tAdmin('GoBack')%>
       </button>
       <h3 id="manager-coach-name" style="color: var(--primary); margin: 15px 0;">Бапкер аты</h3>
@@ -57,8 +59,8 @@
         <div class="admin-card">
           <h4>📅 <%= tAdmin('EventSelector')%>
           </h4>
-          <form action="/api/Event/add" method="post" class="form-group">
-            <select id="event-type">
+          <form id="eventForm" action="/api/Event/add" method="post" enctype='multipart/form-data' class="form-group">
+            <select id="event-type" name="eventType">
               <option>
                 <%= tAdmin('EventType1')%>
               </option>
@@ -66,15 +68,19 @@
                 <%= tAdmin('EventType2')%>
               </option>
             </select>
-            <input type="text" id="event-name" placeholder="<%= tAdmin('EventName')%>">
-            <input type="text" id="event-loc" placeholder="<%= tAdmin('EventPlace')%>">
-            <input type="text" id="event-dates" placeholder="<%= tAdmin('EventDate')%>">
+            <input type="text" id="event-name" name="eventName" placeholder="<%= tAdmin('EventName')%>">
+            <input type="text" id="event-loc" name="coordsUrl" placeholder="<%= tAdmin('EventPlace')%>">
+            <label for="startDate">Start Date</label>
+            <input type="date" name="startDate" placeholder="Start Date">
+            <label for="endDate">End Date</label>
+            <input type="date" name="endDate">
             <label>
               <%= tAdmin('EventRules')%><input type="file" id="event-pdf">
             </label>
             <label>
               <%= tAdmin('Protocol')%><input type="file" id="event-pdf">
             </label>
+            <input type="number" name="CoachId" value="" hidden>
             <button type="submit" class="cta-btn">
               <%= tAdmin('AddEvent')%>
             </button>
@@ -84,12 +90,13 @@
         <div class="admin-card">
           <h4>➕ <%= tAdmin('AddStudent')%>
           </h4>
-          <form action="/api/student/add" method="post" enctype="multipart/form-data" class="form-group">
+          <form action="/api/student/add" method="post" enctype="multipart/form-data" id='studentForm' class="form-group">
             <input type="text" name="firstName" required placeholder="<%= tAdmin('studentFirstName') %>">
             <input type="text" name="lastName" required placeholder="<%= tAdmin('studentLastName')%>">
             <input type="text" name="middleName" required placeholder="<%= tAdmin('studentMiddleName')%>">
-            <input type="text" id="CoachId" name="coachId" hidden>
+            <input type="number" id="CoachId" name="coachId" hidden>
             <input type="text" id="Discipline" name="discipline" hidden>
+            <input type="number" name="eventId" hidden> 
             <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required name="phoneNumber"
               placeholder="<%= tAdmin('studentPhoneNumber')%>">
             <input type="date" name="dateOfBirth" required id="new-ath-dob">
@@ -105,16 +112,16 @@
         <h4>
           <%= tAdmin('StudentList')%>
         </h4>
-        <div id="coach-athletes-table" class="attendance-list"></div>
-        <button onclick="exportExcel()" class="excel-btn"><i class="fa-solid fa-file-excel"></i> Excel жүктеу</button>
-        <!-- ----------- Экспорт эксель -->
+        <div id="coach-athletes-table" class="attendance-list">
+        </div>
+        <button id="exel-btn" class="excel-btn"><i class="fa-solid fa-file-excel"></i> Excel жүктеу</button>
       </div>
     </div>
   </div>
 
-
   <script>
-    window.coachesData = <% - JSON.stringify(coaches) %>;
+    window.coachesData = <%- JSON.stringify(coaches) %>;
+    window.studentsData = <%- JSON.stringify(students) %>;
     const langDataArr = [
       '<%= tAdmin('chsEmpty') %>',
       '<%= tAdmin('chs')%>',
@@ -123,7 +130,7 @@
 
     window.langData = langDataArr; 
   </script>
-  <script src="js/script.js"></script>
+  <script src="js/admin_dash.js"></script>
 </body>
 
 </html>

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { ApiError } from '../utils/ApiError';
-import { checkInput } from '../utils/checkReq';
-import { prisma } from '../db/prisma';
-import { getCoordsFromYandexUrl } from '../utils/coords';
+import { ApiError } from '../utils/ApiError.js';
+import { checkInput } from '../utils/checkReq.js';
+import { prisma } from '../db/prisma.js';
+import { getCoordsFromYandexUrl } from '../utils/coords.js';
 
 export const addEvent = async (req: Request, res: Response) => {
   try {
@@ -13,8 +13,9 @@ export const addEvent = async (req: Request, res: Response) => {
     interface AddEventBody {
       eventName: string,
       coordsUrl: string,
-      startDate: string,
-      endDate: string,
+      startDate: Date,
+      endDate: Date,
+      eventType: string,
       image?: {
         mimeType: string,
         size: number,
@@ -26,6 +27,7 @@ export const addEvent = async (req: Request, res: Response) => {
     const {
       eventName,
       startDate,
+      eventType,
       coordsUrl,
       endDate,
       image,
@@ -36,16 +38,19 @@ export const addEvent = async (req: Request, res: Response) => {
     const latitude = coords.latitude;
     const longitude = coords.longitude;
 
-    const requiredFields = { eventName, latitude, longitude, startDate, endDate};
+    console.log(latitude, longitude, eventName, new Date(startDate), eventType, new Date(endDate));
+
+    const requiredFields = { eventName, eventType, latitude, longitude, startDate, endDate};
 
     checkInput(requiredFields);
-    await prisma.event.create({
+    const data = await prisma.event.create({
       data: {
         eventName: eventName,
+        eventType: eventType,
         latitude: latitude,
         longitude: longitude,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
         ...(image && {
           photos: {
             create: {
@@ -59,11 +64,7 @@ export const addEvent = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(201).json({ 
-      code: "SUCCESS",
-      message: "Event added successfully"
-    });
-
+    return res.json({message: `${data.id}`});
   } catch (error) {
     if (error instanceof ApiError) {
       return res.status(error.status).json({
@@ -72,6 +73,7 @@ export const addEvent = async (req: Request, res: Response) => {
         details: error.details
       });
     }
+    console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -170,3 +172,4 @@ export const deleteEvent = async (req: Request, res: Response) => {
     }
   }
 };
+

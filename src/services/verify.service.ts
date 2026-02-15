@@ -1,4 +1,4 @@
-import { Role, Discipline } from '../generated/prisma/client';
+import { Role, Discipline } from '../generated/prisma/client.js';
 
 export function isValidRole(role: unknown): role is Role {
   return Object.values(Role).includes(role as Role);

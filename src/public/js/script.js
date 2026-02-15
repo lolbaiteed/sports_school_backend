@@ -395,4 +395,10 @@ function verified(id) {
     lbl.style.background = "green";
 }
 
-function logout() { location.reload(); }
+async function logout() {
+  const resp = await fetch('/api/auth/logout', {
+    method: "POST",
+  });
+  
+  window.location.href = '/login'; 
+}

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { Role } from "../generated/prisma/client";
-import { ApiError } from "../utils/ApiError";
+import { Role } from "../generated/prisma/client.js";
+import { ApiError } from "../utils/ApiError.js";
 
 interface JwtPayload {
   sub: number;

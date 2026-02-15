@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { prisma } from "../db/prisma";
-import { encrypt, hashData, verifyHash } from "../services/auth.service";
-import { signAccessToken } from "../utils/jwt";
-import { Role } from "../generated/prisma/client";
-import { checkInput } from "../utils/checkReq";
-import { ApiError } from "../utils/ApiError"; 
+import { prisma } from "../db/prisma.js";
+import { encrypt, hashData, verifyHash } from "../services/auth.service.js";
+import { signAccessToken } from "../utils/jwt.js";
+import { Role } from "../generated/prisma/client.js";
+import { checkInput } from "../utils/checkReq.js";
+import { ApiError } from "../utils/ApiError.js"; 
 
 /**
  * STUFF ONLY
@@ -126,6 +126,7 @@ export const login = async (req: Request, res: Response) => {
       } else if (user?.role === Role.coach) {
         const params = new URLSearchParams({
           role: "coach",
+          id: `${user.id}`
         });
         res.redirect(`/dashboard?${params.toString()}`);
       } else {
@@ -178,10 +179,12 @@ export const login = async (req: Request, res: Response) => {
       path: "/",
     });
 
-    res.redirect('/dashboard');
-
+    if (user.role === Role.admin) {
+      res.redirect('/dashboard?role=admin');
+    } else if (user.role === Role.coach) {
+      res.redirect('/dashboard?role=coach');
+    }
   }
-
 };
 
 export const logout = async (req: Request, res: Response) => {
@@ -194,5 +197,5 @@ export const logout = async (req: Request, res: Response) => {
   }
 
   res.clearCookie('access_token');
-  res.redirect('/');
+  res.redirect('/login');
 };

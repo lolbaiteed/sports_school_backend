@@ -1,8 +1,7 @@
 import { Response, NextFunction } from "express";
-import { Role } from "../generated/prisma/client";
-import { AuthRequest } from "./auth";
-import { ApiError } from "../utils/ApiError";
-
+import { Role } from "../generated/prisma/client.js";
+import { AuthRequest } from "./auth.js";
+import { ApiError } from "../utils/ApiError.js";
 export function authorize(...roles: Role[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
