@@ -46,6 +46,17 @@
       </button>
       <h3 id="selected-sport-title"></h3>
       <div class="list-group" id="coaches-list-admin">
+        <form class="form-group" id='coachForm' style="display: none;">
+          <input type="text" name="username">
+          <input type="text" name="password">
+          <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required name="phoneNumber"
+            placeholder="<%= tAdmin('studentPhoneNumber')%>">
+          <input type="text" name="role">
+          <input type="text" name="firstName">
+          <input type="text" name="lastName">
+          <input type="text" name="middleName">
+          <input type="text" name="discipline" hidden>
+        </form>
       </div>
     </div>
 
@@ -90,13 +101,14 @@
         <div class="admin-card">
           <h4>➕ <%= tAdmin('AddStudent')%>
           </h4>
-          <form action="/api/student/add" method="post" enctype="multipart/form-data" id='studentForm' class="form-group">
+          <form action="/api/student/add" method="post" enctype="multipart/form-data" id='studentForm'
+            class="form-group">
             <input type="text" name="firstName" required placeholder="<%= tAdmin('studentFirstName') %>">
             <input type="text" name="lastName" required placeholder="<%= tAdmin('studentLastName')%>">
             <input type="text" name="middleName" required placeholder="<%= tAdmin('studentMiddleName')%>">
             <input type="number" id="CoachId" name="coachId" hidden>
             <input type="text" id="Discipline" name="discipline" hidden>
-            <input type="number" name="eventId" hidden> 
+            <input type="number" name="eventId" hidden>
             <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required name="phoneNumber"
               placeholder="<%= tAdmin('studentPhoneNumber')%>">
             <input type="date" name="dateOfBirth" required id="new-ath-dob">
@@ -120,8 +132,8 @@
   </div>
 
   <script>
-    window.coachesData = <%- JSON.stringify(coaches) %>;
-    window.studentsData = <%- JSON.stringify(students) %>;
+    window.coachesData = <% - JSON.stringify(coaches) %>;
+    window.studentsData = <% - JSON.stringify(students) %>;
     const langDataArr = [
       '<%= tAdmin('chsEmpty') %>',
       '<%= tAdmin('chs')%>',

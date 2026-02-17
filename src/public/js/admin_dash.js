@@ -1,3 +1,4 @@
+
 let currentCoachId = null;
 async function logout() {
   await fetch('/api/auth/logout', {
@@ -19,7 +20,6 @@ function showCoaches(sportName, discipline) {
     document.getElementById('selected-sport-title').innerText = `${sportName} ${tAdm[1]}:`;
     
     const list = document.getElementById('coaches-list-admin');
-    list.innerHTML = '';
     const coaches = window.coachesData.filter(coach => coach.discipline === discipline); 
 
     if (coaches.length > 0) {
@@ -30,7 +30,7 @@ function showCoaches(sportName, discipline) {
                 </div>`;
         });
     } else {
-        list.innerHTML = `<p>${tAdm[0]}</p>`;
+        list.innerHTML += `<p>${tAdm[0]}</p>`;
     }
 }
 
@@ -135,4 +135,9 @@ function renderCoachAthletesTable() {
         const dateConverted = `${year}-${month}-${day}`;
         list.innerHTML += `<div class="item">${a.firstName} ${a.lastName} (${dateConverted})</div>`;
     });
+}
+
+async function addCoach() {
+  const coachForm = document.getElementById('coachForm');
+  coachForm.style.display = 'flex';
 }
