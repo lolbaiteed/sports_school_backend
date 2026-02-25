@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Басқару Панелі</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+
+    <div id="login-section" class="login-container">
+        <div class="login-box">
+            <h2>Жүйеге кіру</h2>
+            <input type="text" id="username" placeholder="Логин">
+            <input type="password" id="password" placeholder="Құпия сөз">
+            <button onclick="handleLogin()" class="cta-btn">Кіру</button>
+            <p id="login-error" style="color:red; display:none;">Қате!</p>
+            <a href="index.html" class="back-link">← Сайтқа қайту</a>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="panel-container hidden">
+        <header class="panel-header">
+            <h2>Админ Панелі</h2>
+            <button onclick="logout()" class="logout-btn">Шығу</button>
+        </header>
+
+        <div id="sports-view">
+            <h3>Спорт түрін таңдаңыз:</h3>
+            <div class="sports-grid" id="sports-grid-admin">
+                </div>
+        </div>
+
+        <div id="coaches-view" class="hidden">
+            <button onclick="goBackToSports()" class="back-btn">← Спорт түрлеріне қайту</button>
+            <h3 id="selected-sport-title">Бокс жаттықтырушылары:</h3>
+            <div class="list-group" id="coaches-list-admin">
+                </div>
+        </div>
+
+        <div id="manager-view" class="hidden">
+            <button onclick="goBackToCoaches()" class="back-btn">← Артқа</button>
+            <h3 id="manager-coach-name" style="color: var(--primary); margin: 15px 0;">Бапкер аты</h3>
+
+            <div class="admin-actions-grid">
+                <div class="admin-card">
+                    <h4>📅 Жарыс/Жиын тағайындау</h4>
+                    <div class="form-group">
+                        <select id="event-type"><option>Жарыс</option><option>Оқу-жаттығу жиыны</option></select>
+                        <input type="text" id="event-name" placeholder="Атауы">
+                        <input type="text" id="event-loc" placeholder="Өтетін жері (2GIS сілтемесі)">
+                        <input type="text" id="event-dates" placeholder="Уақыты (КК.АА - КК.АА)">
+                        <label>Ереже (PDF): <input type="file" id="event-pdf"></label>
+                        <label>Хаттама (PDF): <input type="file" id="event-pdf"></label>
+                        <button onclick="saveEvent()" class="cta-btn">Тағайындау</button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h4>➕ Спортшы қосу</h4>
+                    <div class="form-group">
+                        <input type="text" id="new-ath-name" placeholder="ФИО">
+                        <input type="date" id="new-ath-dob">
+                        <input type="file" id="new-ath-photo" accept="image/*">
+                        <button onclick="addAthleteToCoach()" class="cta-btn" style="background:green; color:white;">Қосу</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card full-width" style="margin-top:20px;">
+                <h4>Тіркелген спортшылар тізімі</h4>
+                <div id="coach-athletes-table" class="attendance-list"></div>
+                <button onclick="exportExcel()" class="excel-btn"><i class="fa-solid fa-file-excel"></i> Excel жүктеу</button>     <!-- ----------- Экспорт эксель -->
+            </div>
+        </div>
+    </div>
+
+    <div id="coach-panel" class="panel-container hidden">
+        <header class="panel-header">
+            <h2 id="coach-welcome">Бапкер</h2>
+            <button onclick="logout()" class="logout-btn">Шығу</button>
+        </header>
+
+        <div class="event-display" id="coach-event-display">
+            <h3>Бекітілген іс-шара:</h3>
+            <p id="c-event-info">Әзірге іс-шара жоқ.</p>
+            <a href="#" id="c-map-link" target="_blank" class="hidden" style="color:blue; text-decoration:underline;">📍 Картадан көру (2GIS)</a>
+            <div id="admin-check-block" class="hidden" style="margin-top:10px;">
+                <button onclick="confirmArrival()" class="cta-btn" id="arrive-btn">📍 Мен келдім (Растау)</button>
+            </div>
+        </div>
+
+        <hr style="margin: 20px 0;">
+
+        <h3>Спортшыларды түгендеу</h3>
+        <div id="my-athletes-list" class="attendance-list"></div>
+        
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

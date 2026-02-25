@@ -226,37 +226,37 @@ export const addCoach = async (req: Request, res: Response) => {
   }
 };
 
-export const arrivedCoach = async (req: Request, res: Response) => {
-  try {
-    if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
-
-    const coachId = Number(req.params.id);
-
-    const coach = await prisma.user.findUnique({
-      where: {id: coachId},
-      include: {
-        students: true
-      }
-    });
-
-    if (coach === null) {
-      throw new ApiError(404, "NOT_FOUND", "Coach with this ID is not exists");
-    }
-
-    if (!req.files || Number(Array.isArray(req.files.length)) < coach.students.length + 1) throw new ApiError(400, "BAD_REQUEST", "You must send photos of all students and yourself");
-
-    await prisma.event.update({
-      where: {id: eventId},
-      data: {
-        photos: {
-          createMany: {
-          
-          }
-        }
-      }
-    })
-
-  } catch (error) {
-    
-  }
-} 
+// export const arrivedCoach = async (req: Request, res: Response) => {
+//   try {
+//     if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
+//
+//     const coachId = Number(req.params.id);
+//
+//     const coach = await prisma.user.findUnique({
+//       where: {id: coachId},
+//       include: {
+//         students: true
+//       }
+//     });
+//
+//     if (coach === null) {
+//       throw new ApiError(404, "NOT_FOUND", "Coach with this ID is not exists");
+//     }
+//
+//     if (!req.files || Number(Array.isArray(req.files.length)) < coach.students.length + 1) throw new ApiError(400, "BAD_REQUEST", "You must send photos of all students and yourself");
+//
+//     await prisma.event.update({
+//       where: {id: eventId},
+//       data: {
+//         photos: {
+//           createMany: {
+//
+//           }
+//         }
+//       }
+//     })
+//
+//   } catch (error) {
+//
+//   }
+// } 

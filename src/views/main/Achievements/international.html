@@ -2,64 +2,234 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <title>Халықаралық арена</title>
-    <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стипендия иегерлерінің тізімі</title>
+    <style>
+        :root {
+            --primary-blue: #003354;
+            --accent-yellow: #FFB800;
+            --bg-light: #F9F9F9;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: var(--white);
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background-image: url('../back/01.png');
+        }
+
+        /* Жоғарғы тақырып стилі */
+        .header-section {
+            border-bottom: 2px solid var(--accent-yellow);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .section-subtitle {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin: 10px 0 20px 0;
+        }
+
+        /* Категория батырмалары (Спортшы / Жаттықтырушы) */
+        .category-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .category-btn {
+            background: var(--bg-light);
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        /* Квартал батырмалары */
+        .quarter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quarter-btn {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .quarter-btn:hover {
+            background: var(--accent-yellow);
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .quarter-btn.active {
+            background: var(--accent-yellow);
+            color: var(--primary-blue);
+        }
+
+        /* PDF көрсетілетін аймақ */
+        .pdf-viewer-container {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ddd;
+            background-color: #525659;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .back-btn {
+            background: #003366;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .back-btn a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🌍 15 Халықаралық жеңіс</h1>
-        
-        <p>Біздің мақтанышымыз – әлемдік аренада Қазақстанның көк туымызды желбіреткен сәттер. Азия чемпионаттары, Әлем біріншіліктері және халықаралық гран-при турнирлері.</p>
-
-        <h2>Географиялық ауқым</h2>
-        <p>Біздің спортшылар келесі елдерде жеңіс тұғырына көтерілді:</p>
-        <ul class="feature-list">
-            <li>🇰🇿 Қазақстан (Халықаралық турнирлер)</li>
-            <li>🇹🇷 Түркия (Жастар арасындағы әлем кубогы)</li>
-            <li>🇺🇿 Өзбекстан (Азия чемпионаты)</li>
-            <li>🇭🇺 Венгрия (Гран-при)</li>
-            <li>🇦🇪 БАӘ (Азия біріншілігі)</li>
-        </ul>
-
-        <h2>Ең ірі жеңістер тарихы</h2>
-
-        <div class="table-wrapper">
-            <table class="styled-table">
-                <thead>
-                <tr>
-                    <th>Жыл</th>
-                    <th>Өткен жері</th>
-                    <th>Турнир дәрежесі</th>
-                    <th>Нәтиже</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2024</td>
-                    <td>Ташкент, Өзбекстан</td>
-                    <td>Азия Чемпионаты (U20)</td>
-                    <td>🥇 2 Алтын</td>
-                </tr>
-                <tr>
-                    <td>2023</td>
-                    <td>Стамбул, Түркия</td>
-                    <td>Әлем Кубогы</td>
-                    <td>🥇 1 Алтын, 🥈 1 Күміс</td>
-                </tr>
-                <tr>
-                    <td>2022</td>
-                    <td>Будапешт, Венгрия</td>
-                    <td>Халықаралық Гран-при</td>
-                    <td>🥇 3 Алтын</td>
-                </tr>
-            </tbody>
-            </table>
-        </div>
-
-        <a href="../index.html" class="back-btn">⬅ Басты бетке оралу</a>
+<div class="container">
+    <div class="header-section">
+        <span style="font-size: 30px;">🎓</span>
+        <div class="header-title">Стипендия иегерлері</div>
     </div>
+
+    <div class="section-subtitle">Тізімді таңдаңыз:</div>
+
+    <div class="category-buttons">
+        <button class="category-btn active" id="btn-athlete" onclick="changeCategory('athlete')">Спортшы</button>
+        <button class="category-btn" id="btn-coach" onclick="changeCategory('coach')">Жаттықтырушы</button>
+    </div>
+    
+    <div class="quarter-buttons">
+        <button class="quarter-btn active" onclick="changeQuarter(1)">I квартал</button>
+        <button class="quarter-btn" onclick="changeQuarter(2)">II квартал</button>
+        <button class="quarter-btn" onclick="changeQuarter(3)">III квартал</button>
+        <button class="quarter-btn" onclick="changeQuarter(4)">IV квартал</button>
+    </div>
+
+    <div class="pdf-viewer-container">
+        <iframe id="pdfFrame" src="../word/step1.pdf" type="application/pdf">
+            <p>Сіздің браузеріңіз PDF-ті көрсете алмайды.</p>
+        </iframe>
+    </div>
+    <button class="back-btn"> <a href="../index.html">Басты бетке оралу</a></button>
+</div>
+
+<script>
+    // Ағымдағы таңдалған күйлер
+    let currentCategory = 'athlete';
+    let currentQuarter = 1;
+
+    // PDF файлдарын екі категорияға бөліп сақтау
+    const pdfFiles = {
+        athlete: {
+            1: '../word/step.pdf',
+            2: '../word/step2.pdf',
+            3: '../word/step3.pdf',
+            4: '../word/step4.pdf'
+        },
+        coach: {
+            1: '../word/Tstep.pdf', // Жаттықтырушылардың 1-квартал файлы
+            2: '../word/coach_step2.pdf', // Жаттықтырушылардың 2-квартал файлы
+            3: '../word/coach_step3.pdf', // Жаттықтырушылардың 3-квартал файлы
+            4: '../word/coach_step4.pdf'  // Жаттықтырушылардың 4-квартал файлы
+        }
+    };
+
+    // Категорияны өзгерту (Спортшы немесе Жаттықтырушы)
+    function changeCategory(category) {
+        currentCategory = category;
+
+        // Батырмалардың түсін (active) өзгерту
+        document.getElementById('btn-athlete').classList.remove('active');
+        document.getElementById('btn-coach').classList.remove('active');
+        document.getElementById('btn-' + category).classList.add('active');
+
+        // Экрандағы PDF-ті жаңарту
+        updatePDF();
+    }
+
+    // Кварталды өзгерту (1, 2, 3, 4)
+    function changeQuarter(quarter) {
+        currentQuarter = quarter;
+        
+        // Квартал батырмаларының түсін өзгерту
+        const buttons = document.querySelectorAll('.quarter-btn');
+        buttons.forEach((btn, index) => {
+            if (index + 1 === quarter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Экрандағы PDF-ті жаңарту
+        updatePDF();
+    }
+
+    // Iframe ішіндегі файлды ауыстыратын ортақ функция
+    function updatePDF() {
+        const iframe = document.getElementById('pdfFrame');
+        iframe.src = pdfFiles[currentCategory][currentQuarter];
+    }
+</script>
 
 </body>
 </html>

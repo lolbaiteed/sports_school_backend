@@ -1,0 +1,726 @@
+/* --- НЕГІЗГІ БАПТАУЛАР (Variables & Reset) --- */
+:root {
+    --primary: #003366;   /* Қою көк (Ресми) */
+    --secondary: #0056b3; /* Ашық көк */
+    --accent: #ffae00;    /* Алтын (Чемпиондық) */
+    --success: #28a745;   /* Жасыл (Сәтті) */
+    --danger: #dc3545;    /* Қызыл (Шығу/Жою) */
+    --bg: #f4f7f6;        /* Ашық сұр фон */
+    --dark: #2c3e50;      /* Мәтін түсі */
+    --white: #ffffff;     /* Ақ түс */
+}
+
+a{
+    text-decoration: none;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg);
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+/* =========================================
+   1. LANDING PAGE (Index.html)
+   ========================================= */
+
+/* --- Навигация --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background: rgba(255, 255, 255, 0.98);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-contact {
+    font-weight: 600;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.login-btn {
+    text-decoration: none;
+    background: var(--primary);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: var(--secondary);
+    transform: translateY(-2px);
+}
+
+.lang-switch button {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.lang-switch button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* --- Hero Section (Видео Фон) --- */
+.hero {
+    height: 90vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+}
+
+#bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: -1;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    font-weight: 300;
+}
+
+/* --- Жетістіктер (Stats) --- */
+.section {
+    padding: 60px 5%;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    color: var(--primary);
+    font-weight: 800;
+}
+
+.achieve-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.achieve-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    flex: 1;
+    min-width: 250px;
+    transition: 0.3s;
+    border-bottom: 4px solid var(--accent);
+}
+
+.achieve-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.achieve-card i {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.achieve-card h3 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    color: var(--dark);
+}
+
+/* --- Слайдер (Slider) --- */
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.toggle-btn {
+    padding: 15px 30px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    border-radius: 20px;
+    cursor: pointer;
+    color: var(--primary);
+    font-size: 22px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.toggle-btn.active,
+.toggle-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.hidden-slider {
+    display: none;
+}
+
+.slider-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 5px;
+    width: 100%;
+    scrollbar-width: none; /* Firefox */
+    scroll-behavior: smooth;
+}
+
+.slider-track::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.slide-card {
+    min-width: 260px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.slide-img {
+    height: 320px;
+    background: #ddd;
+}
+
+.slide-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slide-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.slide-arrow {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    z-index: 10;
+    font-size: 1.2rem;
+}
+
+.left {
+    left: -10px;
+}
+
+.right {
+    right: -10px;
+}
+
+/* --- Footer --- */
+footer {
+    background: var(--primary);
+    color: white;
+    padding: 50px 5%;
+    margin-top: 50px;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: space-between;
+}
+
+.footer-info h3 {
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+.footer-info p {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-map {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid var(--accent);
+}
+
+.socials a {
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 15px;
+    transition: 0.3s;
+}
+
+.socials a:hover {
+    color: var(--accent);
+}
+
+/* =========================================
+   2. DASHBOARD (dashboard.html)
+   ========================================= */
+
+.dashboard-body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    min-height: 100vh;
+}
+
+/* --- Login Form --- */
+.login-container {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.back-link {
+    display: block;
+    margin-top: 15px;
+    color: #777;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+/* --- Admin Panel Layout --- */
+.panel-container {
+    width: 100%;
+    max-width: 1000px;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 50px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.logout-btn {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- Спорт түрлері (GRID) --- */
+.sports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+}
+
+.sport-item {
+    background: var(--white);
+    border: 1px solid #eee;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    transition: 0.3s;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.sport-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    background: #eef7ff;
+}
+
+.sport-item i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.sport-item h4 {
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+/* --- Жаттықтырушылар тізімі --- */
+.list-group {
+    margin-top: 20px;
+}
+
+.list-group .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.list-group .item:hover {
+    background: #f9f9f9;
+    border-left: 5px solid var(--primary);
+}
+
+/* --- Басқару Формалары (Manage View) --- */
+.back-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+}
+
+.admin-actions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.admin-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    flex: 1;
+    min-width: 320px;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.admin-card h4 {
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.full-width {
+    flex: 100%;
+    width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 5px rgba(0, 51, 102, 0.2);
+}
+
+.cta-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.cta-btn:hover {
+    background: var(--secondary);
+}
+
+.excel-btn {
+    background: #198754;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin-top: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* --- Coach View Styles --- */
+.event-display {
+    background: #e3f2fd;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 5px solid var(--accent);
+    margin-bottom: 30px;
+}
+
+.attendance-list .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.verify-label {
+    background: var(--accent);
+    color: var(--dark);
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.verify-label:hover {
+    background: #e69c00;
+}
+
+/* --- Responsive (Mobile) --- */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        position: relative;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .slide-arrow {
+        display: none;
+    }
+
+    .footer-content {
+        flex-direction: column;
+    }
+
+    .admin-actions-grid {
+        flex-direction: column;
+    }
+
+    .panel-container {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .sport-item i {
+        font-size: 2rem;
+    }
+}
+
+.logo-footer{
+    display: flex;
+}
+
+.logo-footer img{
+    width: 220px;
+    height: 220px;
+    margin: 0 50px;
+}
+
+
+
+
+/* --- АДАПТИВТІ СТИЛЬ (Ұялы телефондар үшін) --- */
+
+/* Барлық элементтерге шекараны есепке алуды қосамыз */
+* {
+    box-sizing: border-box;
+}
+
+/* Экран ені 768px-тен кіші болғанда (Планшет және телефон) */
+@media (max-width: 768px) {
+
+    /* Негізгі контейнер шеттерін қысамыз */
+    .container, .detail-container {
+        width: 95%; /* Енін 100%-ға жуықтаймыз */
+        padding: 20px 15px; /* Ішкі шегіністі азайтамыз */
+        margin: 20px auto;
+    }
+
+    /* Басты беттегі карталар */
+    .cards-container {
+        flex-direction: column; /* Карталарды бірінің астына бірін қоямыз */
+        align-items: center;
+    }
+
+    .card {
+        width: 100%; /* Карта толық енді алады */
+        max-width: 100%; 
+        margin-bottom: 20px;
+    }
+
+    /* Тақырыптарды кішірейту */
+    h1 {
+        font-size: 24px;
+    }
+    
+    h2 {
+        font-size: 20px;
+    }
+
+    /* Кестелер сыйып кетуі үшін */
+    .styled-table {
+        font-size: 14px; /* Әріптерді кішірейтеміз */
+    }
+    
+    .styled-table th, .styled-table td {
+        padding: 8px 10px; /* Кесте ұяшықтарын қысамыз */
+    }
+
+    /* Кесте тым үлкен болса, көлденең скролл қосу үшін */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Галереяны бір қатарға түсіру */
+    .gallery-grid {
+        grid-template-columns: 1fr; /* Бір бағана */
+    }
+
+    /* Артқа қайту түймесін толық енді ету */
+    .back-btn {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+        .logo-footer{
+        display: block;
+        margin: 0 auto;
+    }
+
+    .logo-footer img{
+        width: 80px;
+        height: 80px;
+        margin: 0 15px;
+    }
+}

@@ -17,6 +17,8 @@ body {
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     border-radius: 10px;
     border-top: 5px solid #002b49; /* Негізгі көк түс */
+    background-image: url('/back/000001.png');
+    background-size: cover;
 }
 
 /* Тақырыптар */

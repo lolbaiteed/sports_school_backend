@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../middleware/auth.js";
 import { authorize } from "../middleware/authorize.js";
 import { Role } from '../generated/prisma/client.js';
-import { editCoach, deleteCoach, addCoach, arrivedCoach } from "../controllers/coach.controller.js";
+import { editCoach, deleteCoach, addCoach } from "../controllers/coach.controller.js";
 import { upload } from "../controllers/file.controller.js";
 
 const router = Router();
@@ -246,5 +246,5 @@ router.post('/add', authenticate, authorize(Role.admin), upload.single("avatar")
  */
 router.delete('/:id', authenticate, authorize(Role.admin), deleteCoach);
 
-router.post('/:id/arrived', authenticate, authorize(Role.coach), upload.array('avatars'), arrivedCoach);
+// router.post('/:id/arrived', authenticate, authorize(Role.coach), upload.array('avatars'), arrivedCoach);
 export default router; 
