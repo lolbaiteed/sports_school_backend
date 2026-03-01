@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import swaggerUi from 'swagger-ui-express';
 import authRoutes from "./routes/auth.routes.js";
-import fileRoutes from './routes/file.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import coachRoutes from './routes/coach.routes.js';
 import eventRoutes from './routes/event.routes.js';
@@ -28,7 +27,6 @@ if (process.env.NODE_ENV !== 'production') {
 };
 
 app.use("/api/auth", authRoutes);
-app.use("/api/files", fileRoutes);
 app.use("/api/coach", coachRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/event", eventRoutes);
@@ -74,6 +72,18 @@ app.get('/dashboard', authenticate, authorize(Role.admin, Role.coach), async (re
   }
 })
 
-//TODO: add export to pdf, add recreating/autodelete outdated tokens
+app.get('/athletes', (_req, res) => {
+  res.render('athletes');
+})
+
+app.get('/international', (_req, res) => {
+  res.render('international');
+})
+
+app.get('/medals', (_req, res) => {
+  res.render('medals');
+})
+
+//TODO: add export to pdf  
 
 export default app;
