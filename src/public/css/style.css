@@ -19,10 +19,10 @@ a{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
 }
 
 body {
+    font-family: 'Montserrat', sans-serif;
     background-color: var(--bg);
     color: var(--dark);
     line-height: 1.6;
@@ -162,6 +162,8 @@ body {
     flex-wrap: wrap;
     gap: 30px;
     justify-content: center;
+    font-size: 28px;
+    font-weight: 600;
 }
 
 .achieve-card {
@@ -202,12 +204,13 @@ body {
 }
 
 .toggle-btn {
-    padding: 10px 25px;
+    padding: 15px 30px;
     border: 2px solid var(--primary);
     background: transparent;
     border-radius: 20px;
     cursor: pointer;
     color: var(--primary);
+    font-size: 22px;
     font-weight: bold;
     transition: 0.3s;
 }
@@ -486,21 +489,6 @@ footer {
     gap: 5px;
 }
 
-
-.add-btn {
-    background: green;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-
 .back-btn:hover {
     background: #5a6268;
 }
@@ -649,6 +637,18 @@ footer {
     }
 }
 
+.logo-footer{
+    display: flex;
+}
+
+.logo-footer img{
+    width: 220px;
+    height: 220px;
+    margin: 0 50px;
+}
+
+
+
 
 /* --- АДАПТИВТІ СТИЛЬ (Ұялы телефондар үшін) --- */
 
@@ -698,10 +698,10 @@ footer {
     }
 
     /* Кесте тым үлкен болса, көлденең скролл қосу үшін */
-    .table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
+    /* .table-wrapper { */
+    /*     overflow-x: auto; */
+    /*     -webkit-overflow-scrolling: touch; */
+    /* } */
 
     /* Галереяны бір қатарға түсіру */
     .gallery-grid {
@@ -713,5 +713,15 @@ footer {
         display: block;
         text-align: center;
         width: 100%;
+    }
+        .logo-footer{
+        display: block;
+        margin: 0 auto;
+    }
+
+    .logo-footer img{
+        width: 80px;
+        height: 80px;
+        margin: 0 15px;
     }
 }

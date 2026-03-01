@@ -22,6 +22,7 @@ function showCoaches(sportName, discipline) {
     const list = document.getElementById('coaches-list-admin');
     const coaches = window.coachesData.filter(coach => coach.discipline === discipline); 
 
+    list.innerHTML = '';
     if (coaches.length > 0) {
         coaches.forEach(c => {
             list.innerHTML += `

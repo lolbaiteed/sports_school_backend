@@ -35,7 +35,7 @@ const translations = {
 /* --- 1. СЛАЙДЕРДІ ІСКЕ ҚОСУ (МАҚТАНЫШТАР) --- */
 // Бұл код міндетті түрде жұмыс істеуі керек
 document.addEventListener("DOMContentLoaded", function() {
-    initSliders();
+    // initSliders();
     
     // // Егер Dashboard-та болсақ, алдыңғы логинді тексереміз (қалау бойынша)
     // const savedLang = localStorage.getItem('lang') || 'kk';
@@ -45,9 +45,9 @@ document.addEventListener("DOMContentLoaded", function() {
 // function initSliders() {
 //     const cTrack = document.getElementById('coaches-track');
 //     const aTrack = document.getElementById('athletes-track');
-//
-//     // Егер бұл элементтер табылмаса (мысалы dashboard.html-де), функция тоқтайды
-//     if (!cTrack || !aTrack) return;
+
+    // Егер бұл элементтер табылмаса (мысалы dashboard.html-де), функция тоқтайды
+    // if (!cTrack || !aTrack) return;
 
     // Слайдерді тазалау
     // cTrack.innerHTML = "";
