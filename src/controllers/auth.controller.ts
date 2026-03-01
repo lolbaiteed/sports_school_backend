@@ -86,19 +86,18 @@ export const register = async (req: Request, res: Response) => {
 
   } catch (error) {
     if (error instanceof ApiError) {
+      console.log(`APIError: ${error.message}, STATUS: ${error.status}`)
       return res.status(error.status).json({
         code: error.code,
         message:error.message,
         details: error.details
       });
     }
-    console.error(error);
     return res.status(500).json({
       message: "Internal server error",
     });
   }
 };
-
 
 /**
  * PUBLIC

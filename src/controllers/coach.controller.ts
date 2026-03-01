@@ -98,6 +98,7 @@ export const editCoach = async (req: Request, res: Response) => {
 
   } catch (error) {
     if (error instanceof ApiError) {
+      console.log(`APIError: ${error.message}, STATUS: ${error.status}`)
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
@@ -132,6 +133,7 @@ export const deleteCoach = async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof ApiError) {
+      console.log(`APIError: ${error.message}, STATUS: ${error.status}`)
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
@@ -157,7 +159,7 @@ export const addCoach = async (req: Request, res: Response) => {
     } = req.body;
 
     const image = req.file;
-    ;
+
     interface CoachRequestBody {
       username: string,
       password: string,
@@ -212,6 +214,7 @@ export const addCoach = async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof ApiError) {
+      console.log(`APIError: ${error.message}, STATUS: ${error.status}`)
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
@@ -226,37 +229,83 @@ export const addCoach = async (req: Request, res: Response) => {
   }
 };
 
-// export const arrivedCoach = async (req: Request, res: Response) => {
-//   try {
-//     if (!req.body || Object.entries(req.body).length === 0) throw new ApiError(400, "BAD_REQUEST", "Request body cannot be empty");
-//
-//     const coachId = Number(req.params.id);
-//
-//     const coach = await prisma.user.findUnique({
-//       where: {id: coachId},
-//       include: {
-//         students: true
-//       }
-//     });
-//
-//     if (coach === null) {
-//       throw new ApiError(404, "NOT_FOUND", "Coach with this ID is not exists");
-//     }
-//
-//     if (!req.files || Number(Array.isArray(req.files.length)) < coach.students.length + 1) throw new ApiError(400, "BAD_REQUEST", "You must send photos of all students and yourself");
-//
-//     await prisma.event.update({
-//       where: {id: eventId},
-//       data: {
-//         photos: {
-//           createMany: {
-//
-//           }
-//         }
-//       }
-//     })
-//
-//   } catch (error) {
-//
-//   }
-// } 
+export const arrivedCoach = async (req: Request, res: Response) => {
+  try {
+    const coachId = Number(req.params.id);
+    const files = req.files as Express.Multer.File[];
+
+    await prisma.$transaction(async (tx) => {
+      const coach = await tx.user.findUnique({
+        where: { id: coachId, role: Role.coach },
+        select: {
+          students: {
+            select: { id: true },
+          },
+          events: {
+            take: 1,
+            orderBy: { id: "desc" },
+            select: { id: true },
+          },
+          id: true,
+        },
+      });
+
+      if (coach === null) {
+        throw new ApiError(404, "NOT_FOUND", "Coach with this ID is not exists");
+      }
+
+      if (!req.files || files.length < coach.students.length + 1) {
+        throw new ApiError(400, "BAD_REQUEST", "You must send photos of all students and yourself");
+      }
+
+      await tx.event.update({
+        where: { id: coach.events[0].id },
+        data: {
+          students: {
+            connect: coach.students.map(s => ({ id: s.id })),
+          },
+        }
+      });
+
+      const photoData = [];
+
+      for (const file of files) {
+        for (const student of coach.students) {
+          photoData.push({
+            url: file.path,
+            filename: file.filename,
+            mimeType: file.mimetype,
+            size: file.size,
+
+            eventId: coach.events[0].id,
+            userId: coach.id,
+            studentId: student.id
+          })
+        }
+      }
+
+      await tx.photo.createMany({
+        data: photoData,
+      });
+    });
+
+    return res.status(200).json({
+      code: "OK"
+    });
+
+  } catch (err) {
+    if (err instanceof ApiError) {
+      console.log(`APIError: ${err.message}, STATUS: ${err.status}`)
+      return res.status(err.status).json({
+        code: err.code,
+        message: err.message,
+        details: err.details,
+      });
+    }
+    return res.status(500).json({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Unexpedted error, try again",
+      details: []
+    });
+  }
+} 

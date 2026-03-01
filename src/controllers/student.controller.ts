@@ -86,13 +86,13 @@ export const registerStudent = async (req: Request, res: Response) => {
         message: error.message
       });
     } else if (error instanceof ApiError) {
+      console.log(`APIError: ${error.message}, STATUS: ${error.status}`)
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
         details: error.details
       });
     }
-    console.error(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -123,6 +123,7 @@ export const deleteStudent = async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof ApiError) {
+      console.log(`APIError: ${error.message}, STATUS: ${error.status}`)
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
@@ -208,6 +209,7 @@ export const editStudent = async (req: Request, res: Response) => {
         message: error.message
       });
     } else if (error instanceof ApiError) {
+      console.log(`APIError: ${error.message}, STATUS: ${error.status}`)
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
