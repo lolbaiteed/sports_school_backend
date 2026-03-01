@@ -11,6 +11,10 @@ export const disciplineTranslations: Translations = {
     SportsClimbing: "Скалолазание",
     GrecoRomanWrestling: "Греко-римская борьба",
     Judo: "Дзюдо",
+    Curling: "Кёрлинг",
+    CycleSport: "Велоспорт",
+    Archery: "Стрельба из лука",
+    FreestyleWrestling: "Вольная борьба"
   },
   kk: {
     Weightlifting: "Ауыр атлетика",
@@ -20,6 +24,10 @@ export const disciplineTranslations: Translations = {
     SportsClimbing: "Спорттық құзға өрмелеу",
     GrecoRomanWrestling: "Грек-рим күресі",
     Judo: "Дзюдо",
+    Curling: "Кёрлинг",
+    CycleSport: "Велоспорт",
+    Archery: "Садақ ату",
+    FreestyleWrestling: "Еркін күрес"
   },
 };
 
