@@ -1,0 +1,33 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Басқару Панелі</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body> 
+  <pre><%= JSON.stringify(event, null, 2)%></pre>
+  <div id="coach-panel" class="panel-container">
+    <header class="panel-header">
+      <h2 id="coach-welcome">Бапкер:</h2>
+      <button onclick="logout()" class="logout-btn">Шығу</button>
+    </header>
+
+    <div class="event-display" id="coach-event-display">
+      <h3>Бекітілген іс-шара:</h3>
+      <p id="c-event-info">Әзірге іс-шара жоқ.</p>
+      <a href="#" id="c-map-link" target="_blank" style="color:blue; text-decoration:underline;">📍
+        Картадан көру (2GIS)</a>
+      <div id="admin-check-block" style="margin-top:10px;">
+        <button onclick="confirmArrival()" class="cta-btn" id="arrive-btn">📍 Мен келдім (Растау)</button>
+      </div>
+    </div>
+
+    <hr style="margin: 20px 0;">
+
+    <h3>Спортшыларды түгендеу</h3>
+    <div id="my-athletes-list" class="attendance-list"></div>
+
+  </div>
+  <script src="js/coach_dash.js"></script>
+</body>
